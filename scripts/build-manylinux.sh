@@ -15,7 +15,7 @@ set -e -x
 # This doesn't work:
 # rpm -Uvh "http://yum.postgresql.org/9.5/redhat/rhel-5-x86_64/pgdg-redhat95-9.5-3.noarch.rpm"
 wget -O "/tmp/pgdg.rpm" "https://download.postgresql.org/pub/repos/yum/9.5/redhat/rhel-5-x86_64/pgdg-centos95-9.5-3.noarch.rpm"
-rpm -Uvh "/tmp/pgdg.rpm"
+rpm -Uv "/tmp/pgdg.rpm"
 yum install -y postgresql95-devel postgresql95-server sudo
 
 # Make pg_config available
