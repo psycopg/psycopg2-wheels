@@ -6,6 +6,7 @@ language: generic
 
 services:
     - docker
+    - postgresql
 
 matrix:
     include:
@@ -16,15 +17,16 @@ matrix:
             DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
             LINUX32=linux32
 
-before_install:
+before_script:
     - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
     - chmod 600 known_hosts /tmp/id_rsa-initd-upload
+    - psql -c 'create database psycopg2_test' -U postgres
 
 script:
-    - docker run -t --rm -v $TRAVIS_BUILD_DIR:/build $DOCKER_IMAGE $LINUX32 /build/scripts/build-manylinux.sh
+    - docker run --rm -v $TRAVIS_BUILD_DIR/psycopg2:/psycopg2 -e PSYCOPG2_TESTDB_USER=postgres $DOCKER_IMAGE $LINUX32 /psycopg2/scripts/build-manylinux.sh
 
 after_success:
-    - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" wheels "upload@initd.org:"
+    - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" psycopg2/wheels "upload@initd.org:"
 
 notifications:
   email: false
