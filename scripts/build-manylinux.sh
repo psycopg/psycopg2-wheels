@@ -24,12 +24,12 @@ export PATH="$PGPATH:$PATH"
 
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" wheel /psycopg/ -w wheels/
+    "${PYBIN}/pip" wheel /build/ -w wheels/
 done
 
 # Bundle external shared libraries into the wheels
 for WHL in wheels/*.whl; do
-    auditwheel repair "$WHL" -w /psycopg/wheels
+    auditwheel repair "$WHL" -w /build/wheels
 done
 
 # Create a test cluster
@@ -42,6 +42,6 @@ export PSYCOPG2_TESTDB_USER=postgres
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install psycopg2 --no-index -f /psycopg/wheels
+    "${PYBIN}/pip" install psycopg2 --no-index -f /build/wheels
     "${PYBIN}/python" -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 done
