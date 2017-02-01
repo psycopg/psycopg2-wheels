@@ -2,6 +2,7 @@
 
 sudo: required
 dist: trusty
+language: generic
 
 services:
     - docker
@@ -16,7 +17,10 @@ matrix:
             LINUX32=linux32
 
 script:
-    - docker run -t --rm -v $TRAVIS_BUILD_DIR:/build $DOCKER_IMAGE $LINUX32 /build/scripts/build-manylinux.sh
+    # - docker run -t --rm -v $TRAVIS_BUILD_DIR:/build $DOCKER_IMAGE $LINUX32 /build/scripts/build-manylinux.sh
+    # simulate a faster build for upload
+    - mkdir wheels
+    - touch wheels/whatever$LINUX32
 
 after_success:
     - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
