@@ -22,14 +22,18 @@ yum install -y postgresql95-devel postgresql95-server sudo
 export PGPATH=/usr/pgsql-9.5/bin/
 export PATH="$PGPATH:$PATH"
 
+# Find psycopg version
+export VERSION=$(grep -e ^PSYCOPG_VERSION /build/psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
+export WHEELSDIR="/build/wheels/psycopg2-$VERSION"
+
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/wheels/
+    "${PYBIN}/pip" wheel /build/psycopg2/ -w "$WHEELSDIR"
 done
 
 # Bundle external shared libraries into the wheels
-for WHL in /build/wheels/*.whl; do
-    auditwheel repair "$WHL" -w /build/wheels
+for WHL in "$WHEELSDIR"/*.whl; do
+    auditwheel repair "$WHL" -w "$WHEELSDIR"
 done
 
 # Create a test cluster
@@ -42,6 +46,6 @@ export PSYCOPG2_TESTDB_USER=postgres
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install psycopg2 --no-index -f /build/wheels
+    "${PYBIN}/pip" install psycopg2 --no-index -f "$WHEELSDIR"
     "${PYBIN}/python" -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 done
