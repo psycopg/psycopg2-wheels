@@ -1,19 +1,24 @@
-# Travis config file to build manylinux wheels
+# Travis config file to build psycopg packages
 
 sudo: required
 
 services:
     - docker
 
-before_install:
-    - docker pull quay.io/pypa/manylinux1_x86_64
-    - docker pull quay.io/pypa/manylinux1_i686
-    - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
+matrix:
+    include:
+        - env:
+            DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+            LINUX32=
+        - env:
+            DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+            LINUX32=linux32
 
 script:
-    - scripts/travis-build.sh
+    - docker run -t --rm -v $TRAVIS_BUILD_DIR:/build $DOCKER_IMAGE $LINUX32 /build/scripts/build-manylinux.sh
 
 after_success:
+    - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
     - rsync -e "ssh -i /tmp/id_rsa-initd-upload" wheels upload@initd.org:
 
 notifications:
