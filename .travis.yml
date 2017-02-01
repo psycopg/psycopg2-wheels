@@ -1,6 +1,7 @@
 # Travis config file to build psycopg packages
 
 sudo: required
+dist: trusty
 
 services:
     - docker
