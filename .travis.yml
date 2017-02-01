@@ -21,10 +21,7 @@ before_install:
     - chmod 600 known_hosts /tmp/id_rsa-initd-upload
 
 script:
-    # - docker run -t --rm -v $TRAVIS_BUILD_DIR:/build $DOCKER_IMAGE $LINUX32 /build/scripts/build-manylinux.sh
-    # simulate a faster build for upload
-    - mkdir wheels
-    - touch wheels/whatever$LINUX32
+    - docker run -t --rm -v $TRAVIS_BUILD_DIR:/build $DOCKER_IMAGE $LINUX32 /build/scripts/build-manylinux.sh
 
 after_success:
     - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" wheels "upload@initd.org:"
