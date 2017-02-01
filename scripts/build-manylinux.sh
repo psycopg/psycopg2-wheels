@@ -28,7 +28,7 @@ for PYBIN in /opt/python/*/bin; do
 done
 
 # Bundle external shared libraries into the wheels
-for WHL in wheels/*.whl; do
+for WHL in /build/wheels/*.whl; do
     auditwheel repair "$WHL" -w /build/wheels
 done
 
