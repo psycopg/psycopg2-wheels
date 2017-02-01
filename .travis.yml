@@ -26,6 +26,7 @@ script:
     - touch wheels/whatever$LINUX32
 
 after_success:
+    - chmod 600 known_hosts
     - rsync -e "ssh -i /tmp/id_rsa-initd-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" wheels "upload@initd.org:"
 
 notifications:
