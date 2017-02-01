@@ -24,7 +24,7 @@ export PATH="$PGPATH:$PATH"
 
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" wheel /build/ -w wheels/
+    "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/wheels/
 done
 
 # Bundle external shared libraries into the wheels
