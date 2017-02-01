@@ -18,11 +18,13 @@ matrix:
             LINUX32=linux32
 
 before_script:
-    - sudo netstat -ntpl
-    - grep '^[a-z]' /etc/postgresql/9.2/main/postgresql.conf
-    - errorororor
+    # Set up files required for upload
     - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
     - chmod 600 known_hosts /tmp/id_rsa-initd-upload
+
+    # Postgres should listen on all the ports
+    - echo "listen_address = '*'" | sudo tee -a /etc/postgresql/9.2/main/postgresql.conf
+    - sudo service postgresql restart
     - psql -c 'create database psycopg2_test' -U postgres
 
 script:
