@@ -1,0 +1,20 @@
+# Travis config file to build manylinux wheels
+
+sudo: required
+
+services:
+    - docker
+
+before_install:
+    - docker pull quay.io/pypa/manylinux1_x86_64
+    - docker pull quay.io/pypa/manylinux1_i686
+    - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
+
+script:
+    - scripts/travis-build.sh
+
+after_success:
+    - rsync -e "ssh -i /tmp/id_rsa-initd-upload" wheels upload@initd.org:
+
+notifications:
+  email: false
