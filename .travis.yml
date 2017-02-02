@@ -39,7 +39,7 @@ before_script:
 
 script:
     - docker run --rm -v $TRAVIS_BUILD_DIR/psycopg2:/psycopg2
-      -e PSYCOPG2_TESTDB_USER=postgres
+      -e PSYCOPG2_TESTDB_USER=postgres -e PSYCOPG2_TEST_FAST=1
       $DOCKER_IMAGE $LINUX32 /psycopg2/scripts/build-manylinux.sh
 
 after_success:
