@@ -1,11 +1,15 @@
 Building and uploading psycopg2 wheels
 ======================================
 
-How does it work?
+.. image:: https://travis-ci.org/psycopg/psycopg2-wheels.svg?branch=master
+    :target: https://travis-ci.org/psycopg/psycopg2-wheels
+    :alt: Build Status
 
-It doesn't. Yet. But it will, because we will shameless copy stuff other smart
-people have done.  For instance `numpy wheels`__.
+This project is used to create binary packages of psycopg2_.
 
-.. __: https://github.com/MacPython/numpy-wheels
+Currently it only supports building manylinux_ wheels. In the future it
+should allow building `OSX packages too`__.
 
-Stay tuned.
+.. _psycopg2: http://initd.org/psycopg/
+.. _manylinux: https://github.com/pypa/manylinux
+.. __: https://github.com/psycopg/psycopg2/issues/479
