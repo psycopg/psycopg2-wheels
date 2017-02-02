@@ -8,6 +8,9 @@ services:
     - docker
     - postgresql
 
+addons:
+    postgresql: 9.6
+
 matrix:
     include:
         - env:
@@ -23,9 +26,9 @@ before_script:
     - chmod 600 known_hosts /tmp/id_rsa-initd-upload
 
     # Configure postgres to receive connection from dockers
-    - sudo sed -i "s/^\s*#\?\s*listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.2/main/postgresql.conf
-    - sudo sed -i "s/^\s*#\?\s*client_min_messages.*/client_min_messages = notice/" /etc/postgresql/9.2/main/postgresql.conf
-    - echo "host psycopg2_test postgres 0.0.0.0/0 trust" | sudo tee -a /etc/postgresql/9.2/main/pg_hba.conf
+    - sudo sed -i "s/^\s*#\?\s*listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.6/main/postgresql.conf
+    - sudo sed -i "s/^\s*#\?\s*client_min_messages.*/client_min_messages = notice/" /etc/postgresql/9.6/main/postgresql.conf
+    - echo "host psycopg2_test postgres 0.0.0.0/0 trust" | sudo tee -a /etc/postgresql/9.6/main/pg_hba.conf
     - sudo service postgresql restart
     - psql -c 'create database psycopg2_test' -U postgres
 
