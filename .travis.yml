@@ -22,21 +22,30 @@ matrix:
 
 before_script:
     # Set up files required for upload
-    - openssl aes-256-cbc -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
+    - openssl aes-256-cbc
+      -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv
+      -in id_rsa-initd-upload.enc -out /tmp/id_rsa-initd-upload -d
     - chmod 600 known_hosts /tmp/id_rsa-initd-upload
 
     # Configure postgres to receive connection from dockers
-    - sudo sed -i "s/^\s*#\?\s*listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.6/main/postgresql.conf
-    - sudo sed -i "s/^\s*#\?\s*client_min_messages.*/client_min_messages = notice/" /etc/postgresql/9.6/main/postgresql.conf
-    - echo "host psycopg2_test postgres 0.0.0.0/0 trust" | sudo tee -a /etc/postgresql/9.6/main/pg_hba.conf
+    - sudo sed -i "s/^\s*#\?\s*listen_addresses.*/listen_addresses = '*'/"
+      /etc/postgresql/9.6/main/postgresql.conf
+    - sudo sed -i "s/^\s*#\?\s*client_min_messages.*/client_min_messages = notice/"
+      /etc/postgresql/9.6/main/postgresql.conf
+    - echo "host psycopg2_test postgres 0.0.0.0/0 trust"
+      | sudo tee -a /etc/postgresql/9.6/main/pg_hba.conf
     - sudo service postgresql restart
     - psql -c 'create database psycopg2_test' -U postgres
 
 script:
-    - docker run --rm -v $TRAVIS_BUILD_DIR/psycopg2:/psycopg2 -e PSYCOPG2_TESTDB_USER=postgres $DOCKER_IMAGE $LINUX32 /psycopg2/scripts/build-manylinux.sh
+    - docker run --rm -v $TRAVIS_BUILD_DIR/psycopg2:/psycopg2
+      -e PSYCOPG2_TESTDB_USER=postgres
+      $DOCKER_IMAGE $LINUX32 /psycopg2/scripts/build-manylinux.sh
 
 after_success:
-    - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" psycopg2/wheels "upload@initd.org:"
+    - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload
+        -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'"
+      psycopg2/wheels "upload@initd.org:"
 
 notifications:
   email: false
