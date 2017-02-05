@@ -23,4 +23,4 @@ sudo make install
 # Use this directory to allow uploading it away
 DISTDIR="${TRAVIS_BUILD_DIR}/psycopg2/dist/"
 mkdir -p "$DISTDIR"
-tar cjf "${DISTDIR}/postgresql-${PACKAGE}.tar.bz2" -c /opt "/opt/postgresql-${PACKAGE}"
+tar cjf "${DISTDIR}/postgresql-${PACKAGE}.tar.bz2" -C /opt "postgresql-${PACKAGE}"
