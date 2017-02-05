@@ -14,10 +14,35 @@ addons:
 matrix:
     include:
         - env:
-            PGVER=10.0.0
+            PGVER=7.4.30
             SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.0.26
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.1.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.2.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.3.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.4.22
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=9.0.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=9.1.24
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=10.0.0
             URL=https://github.com/postgres/postgres/archive/master.tar.gz
             PACKAGE=10-master
+            SCRIPT=./scripts/build_dinosaur.sh
+
 
 before_script:
     # Set up files required for upload
