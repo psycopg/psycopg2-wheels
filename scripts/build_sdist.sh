@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e -x
+
 # Find psycopg version
 export VERSION=$(grep -e ^PSYCOPG_VERSION /psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
 
