@@ -7,9 +7,9 @@
 set -e -x
 
 export PGVER2=$(echo "$PGVER" | sed 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+export URL=${URL:-https://ftp.postgresql.org/pub/source/v${PGVER}/postgresql-${PGVER}.tar.bz2}
 
-wget -O - "https://ftp.postgresql.org/pub/source/v${PGVER}/postgresql-${PGVER}.tar.bz2" \
-    | tar xjf -
+wget -O - "$URL" | tar xjf -
 
 cd "postgresql-$PGVER"
 ./configure --prefix "/opt/postgresql-${PGVER2}"
