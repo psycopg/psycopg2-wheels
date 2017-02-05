@@ -15,7 +15,7 @@ cd incoming
 wget -O - "$URL" | tar xzf -
 cd $(ls -t1 | head -1)
 
-./configure --prefix "/opt/postgresql-${PACKAGE}"
+./configure --prefix "/usr/lib/postgresql/${PACKAGE}"
 make
 sudo make install
 
@@ -23,4 +23,4 @@ sudo make install
 # Use this directory to allow uploading it away
 DISTDIR="${TRAVIS_BUILD_DIR}/psycopg2/dist/"
 mkdir -p "$DISTDIR"
-tar cjf "${DISTDIR}/postgresql-${PACKAGE}.tar.bz2" -C /opt "postgresql-${PACKAGE}"
+tar cjf "${DISTDIR}/postgresql-${PACKAGE}.tar.bz2" -C /usr/lib/postgresql "${PACKAGE}"
