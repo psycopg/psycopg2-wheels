@@ -2,11 +2,12 @@
 
 set -e -x
 
+cd $TRAVIS_BUILD_DIR/psycopg2
+
 # Find psycopg version
-export VERSION=$(grep -e ^PSYCOPG_VERSION /psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
+export VERSION=$(grep -e ^PSYCOPG_VERSION setup.py | sed "s/.*'\(.*\)'/\1/")
 
 # Build the source package
-cd $TRAVIS_BUILD_DIR/psycopg2
 python setup.py sdist -d "dist/psycopg2-$VERSION"
 
 # install and test
