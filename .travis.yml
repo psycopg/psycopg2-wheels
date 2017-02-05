@@ -17,6 +17,8 @@ matrix:
             SCRIPT=./scripts/build_manylinux1_i686.sh
         - env:
             SCRIPT=./scripts/build_manylinux1_x86_64.sh
+        - env:
+            SCRIPT=./scripts/build_sdist.sh
 
 before_script:
     # Set up files required for upload
