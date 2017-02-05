@@ -40,7 +40,7 @@ script: $SCRIPT
 after_success:
     - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload
         -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'"
-      psycopg2/wheels "upload@initd.org:"
+      psycopg2/dist "upload@initd.org:"
 
 notifications:
   email: false
