@@ -14,11 +14,9 @@ addons:
 matrix:
     include:
         - env:
-            DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-            LINUX32=
+            SCRIPT=./scripts/build_manylinux1_i686.sh
         - env:
-            DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
-            LINUX32=linux32
+            SCRIPT=./scripts/build_manylinux1_x86_64.sh
 
 before_script:
     # Set up files required for upload
@@ -37,10 +35,7 @@ before_script:
     - sudo service postgresql restart
     - psql -c 'create database psycopg2_test' -U postgres
 
-script:
-    - docker run --rm -v $TRAVIS_BUILD_DIR/psycopg2:/psycopg2
-      -e PSYCOPG2_TESTDB_USER=postgres -e PSYCOPG2_TEST_FAST=1
-      $DOCKER_IMAGE $LINUX32 /psycopg2/scripts/build-manylinux.sh
+script: $SCRIPT
 
 after_success:
     - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload
