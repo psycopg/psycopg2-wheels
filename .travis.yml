@@ -14,11 +14,29 @@ addons:
 matrix:
     include:
         - env:
-            SCRIPT=./scripts/build_manylinux1_i686.sh
+            PGVER=7.4.30
+            SCRIPT=./scripts/build_dinosaur.sh
         - env:
-            SCRIPT=./scripts/build_manylinux1_x86_64.sh
+            PGVER=8.0.26
+            SCRIPT=./scripts/build_dinosaur.sh
         - env:
-            SCRIPT=./scripts/build_sdist.sh
+            PGVER=8.1.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.2.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.3.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=8.4.22
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=9.0.23
+            SCRIPT=./scripts/build_dinosaur.sh
+        - env:
+            PGVER=9.1.24
+            SCRIPT=./scripts/build_dinosaur.sh
 
 before_script:
     # Set up files required for upload
