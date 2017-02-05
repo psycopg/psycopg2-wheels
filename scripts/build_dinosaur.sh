@@ -6,13 +6,13 @@
 
 set -e -x
 
-export PGVER2=$(echo "$PGVER" | sed 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+export PACKAGE=${PACKAGE:-$(echo "$PGVER" | sed 's/\([0-9]\+\.[0-9]\+\).*/\1/')}
 export URL=${URL:-https://ftp.postgresql.org/pub/source/v${PGVER}/postgresql-${PGVER}.tar.bz2}
 
 wget -O - "$URL" | tar xjf -
 
 cd "postgresql-$PGVER"
-./configure --prefix "/opt/postgresql-${PGVER2}"
+./configure --prefix "/opt/postgresql-${PACKAGE}"
 make
 sudo make install
 
@@ -20,4 +20,4 @@ sudo make install
 # Use this directory to allow uploading it away
 DISTDIR="${TRAVIS_BUILD_DIR}/psycopg2/dist/"
 mkdir -p "$DISTDIR"
-tar cjf "${DISTDIR}/postgresql-${PGVER2}.tar.bz2" -c /opt "/opt/postgresql-${PGVER2}"
+tar cjf "${DISTDIR}/postgresql-${PACKAGE}.tar.bz2" -c /opt "/opt/postgresql-${PACKAGE}"
