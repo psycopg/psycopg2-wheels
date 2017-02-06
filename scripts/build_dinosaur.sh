@@ -29,6 +29,15 @@ if (( "$VERNUM" >= 80200 )); then
     sudo make -C contrib install
 fi
 
+# include JSON for PG 9.1
+if (( "$VERNUM" >= 90100 && "$VERNUM" < 90200 )); then
+    cd ../..
+    git clone https://bitbucket.org/adunstan/json_91.git
+    cd json_91
+    make PG_CONFIG="/usr/lib/postgresql/${PACKAGE}"
+    sudo make PG_CONFIG="/usr/lib/postgresql/${PACKAGE}" install
+fi
+
 # Create a tar package of the built system
 # Use this directory to allow uploading it away
 DISTDIR="${TRAVIS_BUILD_DIR}/psycopg2/dist/postgresql"
