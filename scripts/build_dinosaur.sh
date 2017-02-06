@@ -19,7 +19,10 @@ cd incoming
 wget -O - "$URL" | tar xzf -
 cd $(ls -t1 | head -1)
 
-./configure --prefix "/usr/lib/postgresql/${PACKAGE}"
+./configure \
+	--prefix "/usr/lib/postgresql/${PACKAGE}" \
+	CFLAGS="-Wno-aggressive-loop-optimizations"
+
 make
 sudo make install
 
