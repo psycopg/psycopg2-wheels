@@ -9,6 +9,10 @@ set -e -x
 export PACKAGE=${PACKAGE:-$(echo "$PGVER" | sed 's/\([0-9]\+\.[0-9]\+\).*/\1/')}
 export URL=${URL:-https://ftp.postgresql.org/pub/source/v${PGVER}/postgresql-${PGVER}.tar.gz}
 
+# Version as number (e.g. 70410)
+export VERNUM=$(( $(echo $PGVER \
+    | sed 's/\(.\+\)\.\(.\+\)\.\(.\+\)/10000 * \1 + 100 * \2 + \3/') ))
+
 # Download into a directory and try to work out what download
 mkdir incoming
 cd incoming
@@ -17,7 +21,10 @@ cd $(ls -t1 | head -1)
 
 ./configure --prefix "/usr/lib/postgresql/${PACKAGE}"
 make
-make -C contrib
+
+# Contrib < 8.2 are bitrotten, but we only need them from 8.3
+if (( "$VERNUM" >= 80200 )); then make -C contrib; fi
+
 sudo make install
 
 # Create a tar package of the built system
