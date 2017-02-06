@@ -34,8 +34,8 @@ if (( "$VERNUM" >= 90100 && "$VERNUM" < 90200 )); then
     cd ../..
     git clone https://bitbucket.org/adunstan/json_91.git
     cd json_91
-    make PG_CONFIG="/usr/lib/postgresql/${PACKAGE}"
-    sudo make PG_CONFIG="/usr/lib/postgresql/${PACKAGE}" install
+    make PG_CONFIG="/usr/lib/postgresql/${PACKAGE}/bin/pg_config"
+    sudo make PG_CONFIG="/usr/lib/postgresql/${PACKAGE}/bin/pg_config" install
 fi
 
 # Create a tar package of the built system
