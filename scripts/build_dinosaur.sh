@@ -17,6 +17,7 @@ cd $(ls -t1 | head -1)
 
 ./configure --prefix "/usr/lib/postgresql/${PACKAGE}"
 make
+make -C contrib
 sudo make install
 
 # Create a tar package of the built system
