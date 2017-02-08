@@ -40,9 +40,9 @@ Uploading to PyPI
 After the packages are uploaded they can be signed and uploaded on PyPI_, e.g.
 using twine_. Testing releases can be uploaded on `Test PyPI`_.
 
-.. _PyPI: https://testpypi.python.org/pypi/psycopg2
+.. _PyPI: https://pypi.python.org/pypi/psycopg2
 .. _twine: https://pypi.python.org/pypi/twine
-.. _Test PyPI: https://pypi.python.org/pypi/psycopg2
+.. _Test PyPI: https://testpypi.python.org/pypi/psycopg2
 
 You must have your ``~/.pypirc`` file configured__, e.g. ::
 
