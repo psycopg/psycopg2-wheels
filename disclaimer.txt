@@ -1,0 +1,19 @@
+Dear Travis guy,
+
+I am Daniele, psycopg maintainer, and I'm using Travis to try and create OSX
+builds for psycopg2.
+
+Because I don't know much about OSX, and because there is a long backlog of
+works on OSX (https://www.traviscistatus.com/) it will take me a lot of time
+and frustration to get the build script right. As such I'm attempting to ssh
+into a Travis machine so I can type commands interactively. I'm trying to do
+so by reverse tunneling into a server under my control.
+
+I hope this is not a problem for you: if it is please contact me
+(daniele.varrazzo (at) gmail.com) and I will stop immediately.
+
+Thank you for your support. Also, I like your moustache.
+
+Sincerely,
+
+	Daniele

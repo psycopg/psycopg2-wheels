@@ -17,35 +17,14 @@ env:
 
 matrix:
     include:
-        - env:
-            SCRIPT=./scripts/build_sdist.sh
-        - env:
-            SCRIPT=./scripts/build_sdist.sh
-            PACKAGE_NAME="psycopg2-binary"
-        - env:
-            SCRIPT=./scripts/build_manylinux1_i686.sh
-            PACKAGE_NAME="psycopg2-binary"
-        - env:
-            SCRIPT=./scripts/build_manylinux1_x86_64.sh
-            PACKAGE_NAME="psycopg2-binary"
         - os:
             osx
           osx_image:
             xcode9.2
           env:
-            SCRIPT=./scripts/build_macos.sh
-            PACKAGE_NAME="psycopg2-binary"
-
-before_script:
-    - sudo ./scripts/configure_postgres.sh
+            SCRIPT=./scripts/open_tunnel.sh
 
 script: $SCRIPT
-
-deploy:
-  - provider: script
-    script: bash scripts/upload_packages.sh
-    on:
-      branch: master
 
 notifications:
   email: false
