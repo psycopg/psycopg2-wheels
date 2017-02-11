@@ -1,3 +1,4 @@
+#!/bin/bash
 # Configure postgres to receive connection from dockers
 
 set -e -x
@@ -20,10 +21,10 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     service postgresql restart
 
 else
-    export PGDATA="`pwd`/data"
-    initdb
-    pg_ctl -w -l /dev/null start
-    psql -c 'create user postgres superuser' postgres
+    DATADIR="`pwd`/data"
+    sudo -u travis initdb -D "$DATADIR"
+    sudo -u travis pg_ctl -w -D "$DATADIR" -l /dev/null start
+    sudo -u travis psql -c 'create user postgres superuser' postgres
 fi
 
 # Create the database for the test suite
