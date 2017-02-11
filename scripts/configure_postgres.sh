@@ -2,13 +2,7 @@
 
 set -e -x
 
-if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    export PGDATA="`pwd`/data"
-    initdb
-    pg_ctl -w -l /dev/null start
-    psql -c 'create user postgres superuser' postgres
-
-else
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     CONFIG_DIR=/etc/postgresql/9.6/main/
 
     # Listen on all the hosts
@@ -24,6 +18,12 @@ else
       >> "$CONFIG_DIR/pg_hba.conf"
 
     service postgresql restart
+
+else
+    export PGDATA="`pwd`/data"
+    initdb
+    pg_ctl -w -l /dev/null start
+    psql -c 'create user postgres superuser' postgres
 fi
 
 # Create the database for the test suite
