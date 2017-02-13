@@ -39,10 +39,7 @@ before_script:
 
 script: $SCRIPT
 
-after_success:
-    - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload
-        -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'"
-      psycopg2/dist/ "upload@initd.org:"
+after_success: ./scripts/upload_packages.sh
 
 notifications:
   email: false
