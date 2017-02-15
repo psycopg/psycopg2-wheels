@@ -1,0 +1,336 @@
+version : 2.x.{build}
+
+clone_folder: C:\Project
+environment:
+    global:
+        # MSVC Express 2008's setenv.cmd failes if /E:ON and /V:ON are not
+        # enabled in the batch script interpreter
+        #
+        #      WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_compiler.cmd"
+        CMD_IN_ENV: cmd /E:ON /V:ON /C .\appveyor\run_with_env.cmd
+
+    matrix:
+        # For Python versions available on Appveyor, see
+        # http://www.appveyor.com/docs/installed-software#python
+
+        - PYTHON: C:\Python27
+          PYTHON_ARCH: 32
+          # VS 2008
+          VS_VER: 9.0
+        - PYTHON: C:\Python33
+          PYTHON_ARCH: 32
+          # VS 2010
+          VS_VER: 10.0
+        - PYTHON: C:\Python34
+          PYTHON_ARCH: 32
+          # VS 2010
+          VS_VER: 10.0
+        - PYTHON: C:\Python35
+          PYTHON_ARCH: 32
+          # VS 2015
+          VS_VER: 14.0
+        - PYTHON: C:\Python36
+          PYTHON_ARCH: 32
+          # VS 2015
+          VS_VER: 14.0
+        - PYTHON: C:\Python27-x64
+          PYTHON_ARCH: 64
+          # VS 2008
+          VS_VER: 9.0
+        - PYTHON: C:\Python33-x64
+          DISTUTILS_USE_SDK: '1'
+          PYTHON_ARCH: 64
+          # VS 2010
+          VS_VER: 10.0
+        - PYTHON: C:\Python34-x64
+          DISTUTILS_USE_SDK: '1'
+          PYTHON_ARCH: 64
+          # VS 2010
+          VS_VER: 10.0
+        - PYTHON: C:\Python35-x64
+          PYTHON_ARCH: 64
+          # VS 2015
+          VS_VER: 14.0
+        - PYTHON: C:\Python36-x64
+          PYTHON_ARCH: 64
+          # VS 2015
+          VS_VER: 14.0
+
+        #Py27 = 9.0  (VS 2008)
+        #Py 3.3,3.4 = 10.0 (VS 2010)
+        #Py 3.5,3.6 = 14.0 (VS 2015)
+    PSYCOPG2_TESTDB: psycopg2_test
+    PSYCOPG2_TESTDB_USER: postgres
+    PSYCOPG2_TESTDB_PASSWORD: Password12!
+    PSYCOPG2_TESTDB_HOST: localhost
+    PSYCOPG2_TESTDB_PORT: 5432
+
+    PGUSER: postgres
+    PGPASSWORD: Password12!
+
+    REMOTE_KEY:
+        secure: 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
+
+matrix:
+    fast_finish: false
+
+services:
+    - postgresql95
+
+cache:
+  # Rebuild cache if following file changes
+  - C:\Others -> appveyor.cache_rebuild
+
+# Script called before repo cloning
+init:
+    # Uncomment next line to get RDP access during the build.
+    #- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+    #
+    - ECHO Displaying System Information
+    - ECHO
+
+    - ECHO *******************************************************************
+    - ECHO Filesystem root:
+    - ECHO *******************************************************************
+    - ps: "ls C:/"
+
+    - ECHO *******************************************************************
+    - ECHO Installed SDKs:
+    - ECHO *******************************************************************
+    - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
+
+    - ECHO *******************************************************************
+    - ECHO Installed Python Versions
+    - ECHO *******************************************************************
+    - ps: "ls C:/Python*"
+
+    - ECHO *******************************************************************
+    - ECHO Installed PostgreSQL Versions
+    - ECHO *******************************************************************
+    - ps: "ls \"C:/Program Files/PostgreSQL/*\""
+
+    # Set Python to the path
+    - ECHO *******************************************************************
+    - ECHO Environment Variables
+    - ECHO *******************************************************************
+    - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+    - "%PYTHON%\\python -c \"import os, pprint;  pprint.pprint(sorted(os.environ.items()))\""
+
+    # Verify Python version and architecture
+    - ECHO *******************************************************************
+    - ECHO Python Information
+    - ECHO *******************************************************************
+    - "%PYTHON%\\python --version"
+    - "%PYTHON%\\python -c \"import sys; print('64bit: ' + str(sys.maxsize > 2**32))\""
+
+    # Get & Install NASM
+    #- curl -L -o nasminst.exe http://www.nasm.us/pub/nasm/releasebuilds/2.12.02/win64/nasm-2.12.02-installer-x64.exe && start /wait nasminst.exe /S
+    #- SET PATH="C:\Program Files (x86)\nasm;%PATH%"
+
+    # Fix problem with VS2008 Express and 64bit builds
+    - ECHO Fixing VS2008 Express and 64bit builds
+    - COPY "C:\\Program Files (x86)\\Microsoft Visual Studio 9.0\\VC\\bin\\vcvars64.bat" "C:\\Program Files (x86)\\Microsoft Visual Studio 9.0\\VC\\bin\\amd64\\vcvarsamd64.bat"
+
+    # Fix problem with VS2010 Express 64bit missing vcvars64.bat
+    # Note: repository not cloned at this point, so need to fetch
+    # file another way
+    - ECHO Fixing VS2010 Express and 64bit builds
+    - curl -fsSL -o "C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\bin\\amd64\\vcvars64.bat" https://raw.githubusercontent.com/jerickso/psycopg2-appveyor/master/vcvars64-vs2010.bat
+    # curl -fsSL -o "C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\bin\\amd64\\vcvars64.bat" https://raw.githubusercontent.com/psycopg/psycopg2-wheels/master/scripts/vcvars64-vs2010.bat
+
+    # Setup the compiler based upon version and architecture
+    - ECHO Configuring Compiler
+    - IF "%PYTHON_ARCH%"=="32" (CALL "C:\\Program Files (x86)\\Microsoft Visual Studio %VS_VER%\\VC\\vcvarsall.bat" x86)
+    - IF "%PYTHON_ARCH%"=="64" (CALL "C:\\Program Files (x86)\\Microsoft Visual Studio %VS_VER%\\VC\\vcvarsall.bat" amd64)
+
+    # Change PostgreSQL config before service starts to allow > 1 prepared
+    #   transactions for test cases
+    - ECHO max_prepared_transactions = 10 >> "C:\\Program Files\\PostgreSQL\\9.5\\data\\postgresql.conf"
+
+
+# Repository gets cloned, Cache is restored
+install:
+    # We start off CD'ed to cloned folder
+    - SET BASE_DIR=C:\Others\%PYTHON_ARCH%\%VS_VER%
+    - SET BUILD_DIR=%BASE_DIR%\Builds
+    - IF NOT EXIST %BUILD_DIR% MKDIR %BUILD_DIR%
+
+    - ECHO *******************************************************************
+    - ECHO Initialized variables specific for this build
+    - ECHO *******************************************************************
+    - ECHO %BASE_DIR%
+    - ECHO %BUILD_DIR%
+    - ECHO *******************************************************************
+
+    # Setup directories for building OpenSSL libraries
+    - ECHO *******************************************************************
+    - ECHO Preparing for building OpenSSL
+    - ECHO *******************************************************************
+    - SET OPENSSLTOP=%BASE_DIR%\openssl
+    - IF NOT EXIST %OPENSSLTOP%\include\openssl MKDIR %OPENSSLTOP%\include\openssl
+    - IF NOT EXIST %OPENSSLTOP%\lib MKDIR %OPENSSLTOP%\lib
+
+    # Setup OpenSSL Environment Variables based on processor architecture
+    - ps: >-
+        If ($env:PYTHON_ARCH -Match "32" ) {
+            $env:VCVARS_PLATFORM="x86"
+            $env:TARGET="VC-WIN32"
+            $env:DO="do_ms"
+        } Else {
+            $env:VCVARS_PLATFORM="amd64"
+            $env:TARGET="VC-WIN64A"
+            $env:DO="do_win64a"
+            $env:CPU="AMD64"
+        }
+    # Download OpenSSL source
+    - CD C:\Others
+    - IF NOT EXIST OpenSSL_1_0_2k.tar.gz (
+        appveyor DownloadFile https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.tar.gz
+      )
+
+    # To use OpenSSL >= 1.1.0, both libpq and psycopg build environments have
+    #   to support the new library names.  Below are commands to build OpenSSL
+    #   1.1.0:
+    #    - mkdir _build
+    #    - cd _build
+    #    - perl ..\Configure %TARGET% no-asm no-shared --prefix=%BASE_DIR%\openssl --openssldir=%BASE_DIR%\openssl
+    #    - nmake build_libs install_dev
+    - IF NOT EXIST %OPENSSLTOP%\lib\ssleay32.lib (
+        CD %BUILD_DIR% &&
+        7z x C:\Others\OpenSSL_1_0_2k.tar.gz -so | 7z x -si -ttar > nul &&
+        ECHO Build Directory Contents &&
+        ECHO ************************************************************* &&
+        DIR &&
+        CD openssl-OpenSSL_1_0_2k &&
+        perl Configure %TARGET% no-asm no-shared no-zlib --prefix=%OPENSSLTOP% --openssldir=%OPENSSLTOP% &&
+        CALL ms\%DO% &&
+        nmake -f ms\nt.mak init headers lib &&
+        COPY inc32\openssl\*.h %OPENSSLTOP%\include\openssl &&
+        COPY out32\*.lib %OPENSSLTOP%\lib &&
+        CD %BASE_DIR% &&
+        RMDIR /S /Q %BUILD_DIR%\openssl-OpenSSL_1_0_2k
+      )
+
+    # Setup directories for building PostgreSQL librarires
+    - ECHO *******************************************************************
+    - ECHO Preparing for building PostgreSQL libraries
+    - ECHO *******************************************************************
+    - SET PGTOP=%BASE_DIR%\postgresql
+    - IF NOT EXIST %PGTOP%\include MKDIR %PGTOP%\include
+    - IF NOT EXIST %PGTOP%\lib MKDIR %PGTOP%\lib
+    # Download PostgreSQL source
+    - CD C:\Others
+    - IF NOT EXIST postgresql-9.6.2.tar.gz (
+        appveyor DownloadFile https://ftp.postgresql.org/pub/source/v9.6.2/postgresql-9.6.2.tar.gz
+      )
+
+    # Setup build config file (config.pl)
+    # Build libpgport first
+    # Build libpq
+    # NOTE: Cannot set and use the same variable inside an IF
+    - SET PGBUILD=%BUILD_DIR%\postgresql-9.6.2
+    - IF NOT EXIST %PGTOP%\lib\libpq.lib (
+        CD %BUILD_DIR% &&
+        7z x C:\Others\postgresql-9.6.2.tar.gz -so | 7z x -si -ttar > nul &&
+        ECHO Build Directory Contents &&
+        ECHO ************************************************************* &&
+        DIR &&
+        CD postgresql-9.6.2\src\tools\msvc &&
+        ECHO $config-^>{ldap} = 0; > config.pl &&
+        ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
+        ECHO.>> config.pl &&
+        ECHO 1;>> config.pl &&
+        build libpgport &&
+        XCOPY /E ..\..\include %PGTOP%\include &&
+        DIR %PGBUILD% &&
+        COPY %PGBUILD%\Release\libpgport\libpgport.lib %PGTOP%\lib &&
+        CD ..\..\interfaces\libpq &&
+        nmake -f win32.mak USE_OPENSSL=1 ENABLE_THREAD_SAFETY=1 SSL_INC=%OPENSSLTOP%\include  SSL_LIB_PATH=%OPENSSLTOP%\lib config .\Release\libpq.lib &&
+        COPY *.h %PGTOP%\include &&
+        COPY Release\libpq.lib %PGTOP%\lib &&
+        CD %BASE_DIR% &&
+        RMDIR /S /Q %PGBUILD%
+      )
+
+
+    # We need pip current and wheel installed to build wheels
+    - "%PYTHON%\\python.exe -m pip install --upgrade pip"
+    - "%PYTHON%\\python.exe -m pip install wheel"
+
+
+build: off
+
+#before_build:
+build_script:
+    # Add PostgreSQL binaries to the path
+    - PATH=C:\Program Files\PostgreSQL\9.5\bin\;%PATH%
+    - CD C:\project
+    - DIR
+
+    # Update the psycopg2 submodule
+    - git submodule update --init --recursive
+
+    - CD C:\project\psycopg2
+    - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include bdist_wininst bdist_wheel"
+    - "%PYTHON%\\python.exe setup.py install"
+
+#after_build:
+
+before_test:
+    # Create and setup PostgreSQL database for the tests
+    - createdb %PSYCOPG2_TESTDB%
+    - psql -d %PSYCOPG2_TESTDB% -c "CREATE EXTENSION HSTORE;"
+
+test_script:
+    - "%PYTHON%/Scripts/pip.exe --version"
+    # Make sure we are not in a directory where we might import a
+    # different version of psycopg2
+    - CD \
+
+    - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.__version__)\""
+    - "%PYTHON%\\python.exe -c \"from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')\" --verbose"
+
+after_test:
+    - CD C:\project\psycopg2
+    - DIR dist
+
+artifacts:
+    # bdist_wheel puts your built wheel in the dist directory
+    - path: psycopg2\dist\*.whl
+      name: wheel
+    - path: psycopg2\dist\*.egg
+      name: egg
+    - path: psycopg2\dist\*.exe
+      name: exe
+
+deploy: off
+#before_deploy: # Script
+#deploy_script:
+#after_deploy: #Script
+
+#deployment_success: # Webhooks
+on_success: # Script
+#  You can use this step to upload your artifacts to a public website.
+#  See Appveyor's documentation for more details. Or you can simply
+#  access your wheels from the Appveyor "artifacts" tab for your build.
+    - ECHO "Starting Artifact Deployment"
+    - CD C:\project\psycopg2
+
+    # Insert SSH Private Key
+    - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
+    - ps: $fileContent += $env:REMOTE_KEY.Replace(" ", "`n")
+    - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
+    - ps: Set-Content $env:USERPROFILE\.ssh\id_rsa $fileContent
+    # Only upload if the computer is 'online'
+    #- ps: If (Test-Connection -ComputerName initd.org -Count 1 -Quiet) { }
+# Cache is saved after ending of on_success
+
+#build_failure: # Webhooks
+#deployment_failure: # Webhooks
+#on_failure: # Script
+
+
+# Uncomment to enable RDP on build finish
+on_finish:
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
