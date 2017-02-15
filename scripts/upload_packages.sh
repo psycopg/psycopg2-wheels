@@ -7,5 +7,5 @@ set -e -x
 (cd psycopg2/dist && shasum -p -a 1 */*)
 
 rsync -avr \
-    -e "ssh -i /tmp/id_rsa-initd-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" \
+    -e "ssh -i /tmp/id_rsa-travis-upload -o 'UserKnownHostsFile known_hosts' -o 'StrictHostKeyChecking yes'" \
     psycopg2/dist/ "upload@initd.org:"
