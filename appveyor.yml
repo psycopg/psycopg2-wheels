@@ -280,9 +280,6 @@ build_script:
     - "%PYTHON%\\python.exe setup.py install"
     # Install adds an egg at the root of dist
     - DEL C:\project\psycopg2\dist\*.egg
-    - ECHO SHA1 Hashes
-    - ECHO ====================================================================
-    - sha1sum -b dist/psycopg2-%PYVERDIR%/*
 
 #after_build:
 
@@ -325,6 +322,12 @@ on_success: # Script
 #  access your wheels from the Appveyor "artifacts" tab for your build.
     - ECHO "Starting Artifact Deployment"
     - CD C:\project\psycopg2
+
+    - ECHO SHA1 Hashes
+    - ECHO ====================================================================
+    - CD dist
+    - sha1sum -b psycopg2-%PYVERDIR%/*
+    - CD ..
 
     # Insert SSH Private Key from environment variable
     - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
