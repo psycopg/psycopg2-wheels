@@ -1,22 +1,30 @@
 Building and uploading psycopg2 wheels
 ======================================
 
-.. image:: https://travis-ci.org/psycopg/psycopg2-wheels.svg?branch=master
+:Linux/OSX: |travis|
+:Windows: |appveyor|
+
+.. |travis| image:: https://travis-ci.org/psycopg/psycopg2-wheels.svg?branch=master
     :target: https://travis-ci.org/psycopg/psycopg2-wheels
-    :alt: Build Status
+    :alt: Linux and OSX packages build status
 
-This project is used to create binary packages of psycopg2_.
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/psycopg/psycopg2-wheels?svg=true
+    :target: https://ci.appveyor.com/project/psycopg/psycopg2-wheels
+    :alt: Windows packages build status
 
-Currently it only supports building source package and manylinux_ wheels. In
-the future it should allow building `OSX packages too`__. Maybe windows?
+This project is used to create binary packages of psycopg2_. It creates:
+
+- Source distribution package
+- manylinux_ packages
+- OSX packages
+- Windows packages
 
 .. _psycopg2: http://initd.org/psycopg/
 .. _manylinux: https://github.com/pypa/manylinux
-.. __: https://github.com/psycopg/psycopg2/issues/479
 
 
-Creating new wheels
-===================
+Creating new packages
+=====================
 
 When a new psycopg2 release is ready, just upload the submodule to the release
 tag and push::
@@ -28,9 +36,11 @@ tag and push::
     git commit -m "Building packages for psycopg2 2.7 beta 1"
     git push
 
-The packages are `built on Travis CI`__ and uploaded__ on the initd.org server.
+The packages are built on `Travis CI`__ and `AppVeyor CI`__, and uploaded__ on
+the initd.org server.
 
 .. __: https://travis-ci.org/psycopg/psycopg2-wheels
+.. __: https://ci.appveyor.com/project/psycopg/psycopg2-appveyor
 .. __: http://initd.org/psycopg/upload/
 
 
