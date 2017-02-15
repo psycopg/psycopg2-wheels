@@ -247,9 +247,6 @@ build_script:
     - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include"
     - "%PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%"
     - "%PYTHON%\\python.exe setup.py bdist_wheel -d %DISTDIR%"
-    - "%PYTHON%\\python.exe setup.py bdist_egg -d %DISTDIR%"
-    # Install adds an egg at the root of dist
-    - DEL C:\project\psycopg2\dist\*.egg
 
 #after_build:
 
@@ -272,11 +269,8 @@ after_test:
     - CD C:\project\psycopg2
 
 artifacts:
-    # bdist_wheel puts your built wheel in the dist directory
     - path: psycopg2\dist\psycopg2-$(PYVERDIR)\*.whl
       name: wheel
-    - path: psycopg2\dist\psycopg2-$(PYVERDIR)\*.egg
-      name: egg
     - path: psycopg2\dist\psycopg2-$(PYVERDIR)\*.exe
       name: exe
 
