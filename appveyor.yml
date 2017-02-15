@@ -326,13 +326,16 @@ on_success: # Script
     - ECHO "Starting Artifact Deployment"
     - CD C:\project\psycopg2
 
-    # Insert SSH Private Key
+    # Insert SSH Private Key from environment variable
     - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
     - ps: $fileContent += $env:REMOTE_KEY.Replace(" ", "`n")
     - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
-    - ps: Set-Content $env:USERPROFILE\.ssh\id_rsa $fileContent
+    - ps: Set-Content C:\Project\id_rsa $fileContent
+
+    # Make a directory to please MinGW's version of ssh
+    - MKDIR C:\MinGW\msys\1.0\home\appveyor\.ssh
     # Only upload if the computer is 'online'
-    #- ps: If (Test-Connection -ComputerName initd.org -Count 1 -Quiet) { }
+    - ps: If (Test-Connection -ComputerName initd.org -Count 1 -Quiet) { C:\MinGW\msys\1.0\bin\rsync -avr -e "C:\\MinGW\\msys\\1.0\\bin\\ssh -i C:\\Project\\id_rsa -o UserKnownHostsFile=C:\\Project\\known_hosts" "dist/" "upload@initd.org:" }
 # Cache is saved after ending of on_success
 
 #build_failure: # Webhooks
