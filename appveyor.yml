@@ -252,7 +252,6 @@ install:
         RMDIR /S /Q %PGBUILD%
       )
 
-
     # We need pip current and wheel installed to build wheels
     - "%PYTHON%\\python.exe -m pip install --upgrade pip"
     - "%PYTHON%\\python.exe -m pip install wheel"
@@ -277,7 +276,6 @@ build_script:
     - "%PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%"
     - "%PYTHON%\\python.exe setup.py bdist_wheel -d %DISTDIR%"
     - "%PYTHON%\\python.exe setup.py bdist_egg -d %DISTDIR%"
-    - "%PYTHON%\\python.exe setup.py install"
     # Install adds an egg at the root of dist
     - DEL C:\project\psycopg2\dist\*.egg
 
@@ -286,16 +284,17 @@ build_script:
 before_test:
     # Create and setup PostgreSQL database for the tests
     - createdb %PSYCOPG2_TESTDB%
-    - psql -d %PSYCOPG2_TESTDB% -c "CREATE EXTENSION HSTORE;"
 
 test_script:
     - "%PYTHON%/Scripts/pip.exe --version"
+    - "%PYTHON%/Scripts/pip.exe install --no-index -f %DISTDIR% psycopg2"
+    - ps: $env:PSYCOPG2_TEST_FAST = "1"
     # Make sure we are not in a directory where we might import a
     # different version of psycopg2
     - CD \
 
     - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.__version__)\""
-    - "%PYTHON%\\python.exe -c \"from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')\" --verbose"
+    - "%PYTHON%\\python.exe -c \"from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')\""
 
 after_test:
     - CD C:\project\psycopg2
