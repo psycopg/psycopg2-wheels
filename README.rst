@@ -1,5 +1,5 @@
-Building and uploading psycopg2 wheels
-======================================
+Building and uploading psycopg2 packages
+========================================
 
 :Linux/OSX: |travis|
 :Windows: |appveyor|
@@ -15,9 +15,9 @@ Building and uploading psycopg2 wheels
 This project is used to create binary packages of psycopg2_. It creates:
 
 - Source distribution package
-- manylinux_ packages
-- OSX packages
-- Windows packages
+- manylinux_ wheel packages
+- OSX wheel packages
+- Windows wheel and exe packages
 
 .. _psycopg2: http://initd.org/psycopg/
 .. _manylinux: https://github.com/pypa/manylinux
