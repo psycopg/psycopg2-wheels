@@ -273,6 +273,9 @@ build_script:
     - CD C:\project\psycopg2
     - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include bdist_wininst bdist_wheel"
     - "%PYTHON%\\python.exe setup.py install"
+    - ECHO SHA1 Hashes
+    - ECHO ====================================================================
+    - sha1sum -b dist/*
 
 #after_build:
 
