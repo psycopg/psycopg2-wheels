@@ -86,35 +86,8 @@ init:
     # Uncomment next line to get RDP access during the build.
     #- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
     #
-    - ECHO Displaying System Information
-    - ECHO
-
-    - ECHO *******************************************************************
-    - ECHO Filesystem root:
-    - ECHO *******************************************************************
-    - ps: "ls C:/"
-
-    - ECHO *******************************************************************
-    - ECHO Installed SDKs:
-    - ECHO *******************************************************************
-    - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
-
-    - ECHO *******************************************************************
-    - ECHO Installed Python Versions
-    - ECHO *******************************************************************
-    - ps: "ls C:/Python*"
-
-    - ECHO *******************************************************************
-    - ECHO Installed PostgreSQL Versions
-    - ECHO *******************************************************************
-    - ps: "ls \"C:/Program Files/PostgreSQL/*\""
-
     # Set Python to the path
-    - ECHO *******************************************************************
-    - ECHO Environment Variables
-    - ECHO *******************************************************************
     - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
-    - "%PYTHON%\\python -c \"import os, pprint;  pprint.pprint(sorted(os.environ.items()))\""
 
     # Verify Python version and architecture
     - ECHO *******************************************************************
@@ -264,7 +237,6 @@ build_script:
     # Add PostgreSQL binaries to the path
     - PATH=C:\Program Files\PostgreSQL\9.5\bin\;%PATH%
     - CD C:\project
-    - DIR
 
     # Update the psycopg2 submodule
     - git submodule update --init --recursive
@@ -298,7 +270,6 @@ test_script:
 
 after_test:
     - CD C:\project\psycopg2
-    - DIR dist
 
 artifacts:
     # bdist_wheel puts your built wheel in the dist directory
