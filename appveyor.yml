@@ -108,8 +108,7 @@ init:
     # Note: repository not cloned at this point, so need to fetch
     # file another way
     - ECHO Fixing VS2010 Express and 64bit builds
-    - curl -fsSL -o "C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\bin\\amd64\\vcvars64.bat" https://raw.githubusercontent.com/jerickso/psycopg2-appveyor/master/vcvars64-vs2010.bat
-    # curl -fsSL -o "C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\bin\\amd64\\vcvars64.bat" https://raw.githubusercontent.com/psycopg/psycopg2-wheels/master/scripts/vcvars64-vs2010.bat
+    - curl -fsSL -o "C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\bin\\amd64\\vcvars64.bat" https://raw.githubusercontent.com/psycopg/psycopg2/master/scripts/vcvars64-vs2010.bat
 
     # Setup the compiler based upon version and architecture
     - ECHO Configuring Compiler
@@ -157,8 +156,8 @@ install:
         }
     # Download OpenSSL source
     - CD C:\Others
-    - IF NOT EXIST OpenSSL_1_0_2k.tar.gz (
-        appveyor DownloadFile https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.tar.gz
+    - IF NOT EXIST OpenSSL_1_0_2k.zip (
+        curl -fsSL -o OpenSSL_1_0_2k.zip https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.zip
       )
 
     # To use OpenSSL >= 1.1.0, both libpq and psycopg build environments have
@@ -170,10 +169,7 @@ install:
     #    - nmake build_libs install_dev
     - IF NOT EXIST %OPENSSLTOP%\lib\ssleay32.lib (
         CD %BUILD_DIR% &&
-        7z x C:\Others\OpenSSL_1_0_2k.tar.gz -so | 7z x -si -ttar > nul &&
-        ECHO Build Directory Contents &&
-        ECHO ************************************************************* &&
-        DIR &&
+        7z x C:\Others\OpenSSL_1_0_2k.zip &&
         CD openssl-OpenSSL_1_0_2k &&
         perl Configure %TARGET% no-asm no-shared no-zlib --prefix=%OPENSSLTOP% --openssldir=%OPENSSLTOP% &&
         CALL ms\%DO% &&
@@ -193,29 +189,25 @@ install:
     - IF NOT EXIST %PGTOP%\lib MKDIR %PGTOP%\lib
     # Download PostgreSQL source
     - CD C:\Others
-    - IF NOT EXIST postgresql-9.6.2.tar.gz (
-        appveyor DownloadFile https://ftp.postgresql.org/pub/source/v9.6.2/postgresql-9.6.2.tar.gz
+    - IF NOT EXIST postgres-REL9_6_2.zip (
+        curl -fsSL -o postgres-REL9_6_2.zip https://github.com/postgres/postgres/archive/REL9_6_2.zip
       )
 
     # Setup build config file (config.pl)
     # Build libpgport first
     # Build libpq
     # NOTE: Cannot set and use the same variable inside an IF
-    - SET PGBUILD=%BUILD_DIR%\postgresql-9.6.2
+    - SET PGBUILD=%BUILD_DIR%\postgres-REL9_6_2
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
         CD %BUILD_DIR% &&
-        7z x C:\Others\postgresql-9.6.2.tar.gz -so | 7z x -si -ttar > nul &&
-        ECHO Build Directory Contents &&
-        ECHO ************************************************************* &&
-        DIR &&
-        CD postgresql-9.6.2\src\tools\msvc &&
+        7z x C:\Others\postgres-REL9_6_2.zip &&
+        CD postgres-REL9_6_2\src\tools\msvc &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
         ECHO 1;>> config.pl &&
         build libpgport &&
         XCOPY /E ..\..\include %PGTOP%\include &&
-        DIR %PGBUILD% &&
         COPY %PGBUILD%\Release\libpgport\libpgport.lib %PGTOP%\lib &&
         CD ..\..\interfaces\libpq &&
         nmake -f win32.mak USE_OPENSSL=1 ENABLE_THREAD_SAFETY=1 SSL_INC=%OPENSSLTOP%\include  SSL_LIB_PATH=%OPENSSLTOP%\lib config .\Release\libpq.lib &&
@@ -233,15 +225,16 @@ install:
 build: off
 
 #before_build:
+
 build_script:
     # Add PostgreSQL binaries to the path
     - PATH=C:\Program Files\PostgreSQL\9.5\bin\;%PATH%
-    - CD C:\project
+    - CD C:\Project
 
     # Update the psycopg2 submodule
     - git submodule update --init --recursive
 
-    - CD C:\project\psycopg2
+    - CD C:\Project\psycopg2
     - ps: $env:PYVERDIR = (Select-String setup.py -pattern "^PSYCOPG_VERSION = '(.*)'").Matches.Groups[1].Value
     - ps: $env:DISTDIR = "C:\\Project\\psycopg2\\dist\\psycopg2-" + $env:PYVERDIR
     - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include"
@@ -266,7 +259,7 @@ test_script:
     - "%PYTHON%\\python.exe -c \"from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')\""
 
 after_test:
-    - CD C:\project\psycopg2
+    - CD C:\Project\psycopg2
 
 artifacts:
     - path: psycopg2\dist\psycopg2-$(PYVERDIR)\*.whl
@@ -285,7 +278,7 @@ on_success: # Script
 #  See Appveyor's documentation for more details. Or you can simply
 #  access your wheels from the Appveyor "artifacts" tab for your build.
     - ECHO "Starting Artifact Deployment"
-    - CD C:\project\psycopg2
+    - CD C:\Project\psycopg2
 
     - ECHO SHA1 Hashes
     - ECHO ====================================================================
@@ -313,4 +306,3 @@ on_success: # Script
 # Uncomment to enable RDP on build finish
 on_finish:
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
