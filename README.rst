@@ -62,7 +62,7 @@ You must have your ``~/.pypirc`` file configured__, e.g. ::
         testpypi
 
     [pypi]
-    repository: http://www.python.org/pypi
+    repository: https://pypi.python.org/pypi/
     username: piro
     password:<whatever>
 
