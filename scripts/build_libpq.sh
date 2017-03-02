@@ -36,6 +36,13 @@ wget -O - https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
 	| tar xzvf -
 
 cd "postgres-${POSTGRES_TAG}/"
+
+# Match the default unix socket dir default with what defined on Ubuntu and
+# Red Hat, which seems the most common location
+sed -i 's|#define DEFAULT_PGSOCKET_DIR .*'\
+'|#define DEFAULT_PGSOCKET_DIR "/var/run/postgresql"|' \
+	src/include/pg_config_manual.h
+
 ./configure --prefix=/usr/local --without-readline \
 	--with-gssapi --with-openssl --with-pam --with-ldap
 (cd src/interfaces/libpq && make && make install)
