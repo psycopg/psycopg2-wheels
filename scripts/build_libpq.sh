@@ -12,16 +12,16 @@ POSTGRES_TAG=REL9_6_2
 
 yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
-wget -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
-	| tar xzvf -
+wget -q -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
+	| tar xzf -
 cd "openssl-${OPENSSL_TAG}/"
 ./config --prefix=/usr/local/ --openssldir=/usr/local/ zlib no-idea no-mdc2 no-rc5 no-ec no-ecdh no-ecdsa shared --with-krb5-flavor=MIT
 make depend
 make && make install
 cd ..
 
-wget -O - ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_VERSION}.tgz \
-	| tar xzvf -
+wget -q -O - ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_VERSION}.tgz \
+	| tar xzf -
 cd "openldap-${LDAP_VERSION}/"
 ./configure --enable-backends=no --enable-null
 make depend
@@ -33,8 +33,8 @@ make depend
 chmod +x /usr/local/lib/{libldap,liblber}*.so*
 cd ..
 
-wget -O - https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
-	| tar xzvf -
+wget -q -O - https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
+	| tar xzf -
 
 cd "postgres-${POSTGRES_TAG}/"
 

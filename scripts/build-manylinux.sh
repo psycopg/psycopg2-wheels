@@ -14,7 +14,7 @@ set -e -x
 
 # Create prerequisite libraries
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-${DIR}/build_libpq.sh
+${DIR}/build_libpq.sh > /dev/null
 
 # Find psycopg version
 export VERSION=$(grep -e ^PSYCOPG_VERSION /build/psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
