@@ -10,7 +10,7 @@ OPENSSL_TAG=OpenSSL_1_0_2k
 LDAP_VERSION=2.4.44
 POSTGRES_TAG=REL9_6_2
 
-yum install -y zlib-devel krb5-devel pam-devel
+yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
 wget -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
 	| tar xzvf -
@@ -30,6 +30,7 @@ make depend
 (cd libraries/libldap/ && make && make install)
 (cd libraries/libldap_r/ && make && make install)
 (cd include/ && make install)
+chmod +x /usr/local/lib/{libldap,liblber}*.so*
 cd ..
 
 wget -O - https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
