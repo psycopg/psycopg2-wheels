@@ -12,16 +12,9 @@
 
 set -e -x
 
-# Install postgres packages for build and testing
-# This doesn't work:
-# rpm -Uvh "http://yum.postgresql.org/9.5/redhat/rhel-5-x86_64/pgdg-redhat95-9.5-3.noarch.rpm"
-wget -O "/tmp/pgdg.rpm" "https://download.postgresql.org/pub/repos/yum/9.5/redhat/rhel-5-x86_64/pgdg-centos95-9.5-3.noarch.rpm"
-rpm -Uv "/tmp/pgdg.rpm"
-yum install -y postgresql95-devel
-
-# Make pg_config available
-export PGPATH=/usr/pgsql-9.5/bin/
-export PATH="$PGPATH:$PATH"
+# Create prerequisite libraries
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+${DIR}/build_libpq.sh
 
 # Find psycopg version
 export VERSION=$(grep -e ^PSYCOPG_VERSION /build/psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")

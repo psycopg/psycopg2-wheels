@@ -6,33 +6,40 @@
 
 set -e -x
 
-yum install -y zlib-devel krb5-devel pam-devel openldap-devel
+OPENSSL_TAG=OpenSSL_1_0_2k
+LDAP_VERSION=2.4.44
+POSTGRES_TAG=REL9_6_2
 
-wget -O - https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.tar.gz | tar xzvf -
-cd openssl-OpenSSL_1_0_2k/
+yum install -y zlib-devel krb5-devel pam-devel
 
-./config --prefix=/usr/local/ --openssldir=/usr/local/ zlib no-idea no-mdc2 no-rc5 no-ec no-ecdh no-ecdsa shared --with-krb5-flavor=MIT 
+wget -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
+	| tar xzvf -
+cd "openssl-${OPENSSL_TAG}/"
+./config --prefix=/usr/local/ --openssldir=/usr/local/ zlib no-idea no-mdc2 no-rc5 no-ec no-ecdh no-ecdsa shared --with-krb5-flavor=MIT
 make depend
-make
-make install
+make && make install
 cd ..
 
-wget -O - https://github.com/postgres/postgres/archive/REL9_6_2.tar.gz | tar xzvf -
+wget -O - ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_VERSION}.tgz \
+	| tar xzvf -
+cd "openldap-${LDAP_VERSION}/"
+./configure --enable-backends=no --enable-null
+make depend
+(cd libraries/liblutil/ && make)
+(cd libraries/liblber/ && make && make install)
+(cd libraries/libldap/ && make && make install)
+(cd libraries/libldap_r/ && make && make install)
+(cd include/ && make install)
+cd ..
 
-cd postgres-REL9_6_2/
-./configure --without-readline --with-gssapi --with-openssl --with-pam --with-ldap --prefix=/usr/local
+wget -O - https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
+	| tar xzvf -
 
-cd src/interfaces/libpq
-make
-make install
-cd ../../../
-
-cd src/bin/pg_config
-make
-make install
-cd ../../../
-
-cd src/include
-make
+cd "postgres-${POSTGRES_TAG}/"
+./configure --prefix=/usr/local --without-readline \
+	--with-gssapi --with-openssl --with-pam --with-ldap
+(cd src/interfaces/libpq && make && make install)
+(cd src/bin/pg_config && make && make install)
 # This will fail after installing postgres_fe.h, which is what we need
-make install || true
+(cd src/include && make && make install || true)
+cd ..
