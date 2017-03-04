@@ -15,7 +15,7 @@ yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 wget -q -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
 	| tar xzf -
 cd "openssl-${OPENSSL_TAG}/"
-./config --prefix=/usr/local/ --openssldir=/usr/local/ zlib no-idea no-mdc2 no-rc5 no-ec no-ecdh no-ecdsa shared --with-krb5-flavor=MIT
+./config --prefix=/usr/local/ --openssldir=/usr/local/ zlib -fPIC shared --with-krb5-flavor=MIT
 make depend
 make && make install
 cd ..
