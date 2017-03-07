@@ -1,28 +1,39 @@
 #!/bin/bash
 
-# Build a modern version of libpq from source on Centos 5
-
-# work in progress, to be tested entirely
+# Build a modern version of libpq and depending libs from source on Centos 5
 
 set -e -x
 
-OPENSSL_TAG=OpenSSL_1_0_2k
-LDAP_VERSION=2.4.44
-POSTGRES_TAG=REL9_6_2
+OPENSSL_VERSION="1.0.2k"
+LDAP_VERSION="2.4.44"
+POSTGRES_VERSION="9.6.2"
+
+OPENSSL_TAG="OpenSSL_${OPENSSL_VERSION//./_}"
+LDAP_TAG="${LDAP_VERSION}"
+POSTGRES_TAG="REL${POSTGRES_VERSION//./_}"
 
 yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
 wget -q -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
 	| tar xzf -
 cd "openssl-${OPENSSL_TAG}/"
-./config --prefix=/usr/local/ --openssldir=/usr/local/ zlib -fPIC shared --with-krb5-flavor=MIT
+
+# Expose the lib version number in the .so file name
+# It doesn't really work: the final letter is not exposed.
+# You can use strings /path/to/libssl.so | grep '^OpenSSL ' to get the version
+# sed -i "s/SHLIB_VERSION_NUMBER\s\+\".*\"/SHLIB_VERSION_NUMBER \"${OPENSSL_VERSION}\"/" \
+#     ./crypto/opensslv.h
+
+./config --prefix=/usr/local/ --openssldir=/usr/local/ \
+    zlib -fPIC shared --with-krb5-flavor=MIT
 make depend
 make && make install
 cd ..
 
-wget -q -O - ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_VERSION}.tgz \
+wget -q -O - \
+    ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_TAG}.tgz \
 	| tar xzf -
-cd "openldap-${LDAP_VERSION}/"
+cd "openldap-${LDAP_TAG}/"
 ./configure --enable-backends=no --enable-null
 make depend
 (cd libraries/liblutil/ && make)
