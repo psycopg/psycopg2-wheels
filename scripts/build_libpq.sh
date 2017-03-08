@@ -19,15 +19,24 @@ wget -q -O - https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
 cd "openssl-${OPENSSL_TAG}/"
 
 # Expose the lib version number in the .so file name
-# It doesn't really work: the final letter is not exposed.
-# You can use strings /path/to/libssl.so | grep '^OpenSSL ' to get the version
-# sed -i "s/SHLIB_VERSION_NUMBER\s\+\".*\"/SHLIB_VERSION_NUMBER \"${OPENSSL_VERSION}\"/" \
-#     ./crypto/opensslv.h
+sed -i "s/SHLIB_VERSION_NUMBER\s\+\".*\""\
+"/SHLIB_VERSION_NUMBER \"${OPENSSL_VERSION}\"/" \
+    ./crypto/opensslv.h
+sed -i "s|if (\$shlib_version_number =~ /(^\[0-9\]\*)\\\.(\[0-9\\\.\]\*)/)"\
+"|if (\$shlib_version_number =~ /(^[0-9]*)\.([0-9\.]*[a-z]?)/)|" \
+	./Configure
 
 ./config --prefix=/usr/local/ --openssldir=/usr/local/ \
     zlib -fPIC shared --with-krb5-flavor=MIT
 make depend
-make && make install
+make
+
+# Check the shlib built has the correct version number in the name
+if [[ ! -f "./libssl.so.${OPENSSL_VERSION}" ]]; then
+	echo >&2 "libssl.so.${OPENSSL_VERSION} not found, there is $(ls libssl.so.*)"
+	exit 1
+fi
+make install
 cd ..
 
 wget -q -O - \
