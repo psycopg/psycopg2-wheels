@@ -47,6 +47,14 @@ the initd.org server.
 Uploading to PyPI
 =================
 
+.. note::
+
+    These are just minimal instruction to create test packages. To make
+    a new public release please follow the instructions in
+    `psycopg2/doc/release.rst`__.
+
+    .. __: https://github.com/psycopg/psycopg2/blob/master/doc/release.rst
+
 After the packages are uploaded they can be signed and uploaded on PyPI_, e.g.
 using twine_. Testing releases can be uploaded on `Test PyPI`_.
 
@@ -73,27 +81,23 @@ You must have your ``~/.pypirc`` file configured__, e.g. ::
 
 .. __: https://wiki.python.org/moin/TestPyPI
 
-Then you can download, sign, and upload the packages::
+Then you can download, sign, and release the packages::
 
     rsync -arv initd.org:/home/upload/upload/psycopg2-2.7b1 .
 
     # For a test release
     twine upload -s -r testpypi psycopg2-2.7b1/*
 
-    # For a final release
-    twine upload -s -r pypi psycopg2-2.7/*
 
 You can test what just uploaded with::
 
     # Make sure you have a version that understand wheels
     pip install -U pip
 
-    # For a test release
+    # Install from testpypi
     pip install -i https://testpypi.python.org/pypi --no-cache-dir psycopg2==2.7b1
 
-    # For a final release
-    pip install --no-cache-dir psycopg2
-
+    # Check the version installed is the correct one and test if it works ok.
     python -c "import psycopg2; print(psycopg2.__version__)"
     # 2.7b1 (dt dec pq3 ext lo64)
 
