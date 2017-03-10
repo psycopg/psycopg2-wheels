@@ -71,3 +71,5 @@ sed -i 's|#define DEFAULT_PGSOCKET_DIR .*'\
 # This will fail after installing postgres_fe.h, which is what we need
 (cd src/include && make && make install || true)
 cd ..
+
+find /usr/local/ -name \*.so.\* -type f -exec strip --strip-unneeded {} \;
