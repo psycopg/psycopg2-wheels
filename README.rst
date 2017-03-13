@@ -8,7 +8,7 @@ Building and uploading psycopg2 packages
     :target: https://travis-ci.org/psycopg/psycopg2-wheels
     :alt: Linux and OSX packages build status
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/psycopg/psycopg2-wheels?svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/psycopg/psycopg2-wheels?branch=master&svg=true
     :target: https://ci.appveyor.com/project/psycopg/psycopg2-wheels
     :alt: Windows packages build status
 
