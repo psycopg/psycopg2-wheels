@@ -40,7 +40,7 @@ The packages are built on `Travis CI`__ and `AppVeyor CI`__, and uploaded__ on
 the initd.org server.
 
 .. __: https://travis-ci.org/psycopg/psycopg2-wheels
-.. __: https://ci.appveyor.com/project/psycopg/psycopg2-appveyor
+.. __: https://ci.appveyor.com/project/psycopg/psycopg2-wheels
 .. __: http://initd.org/psycopg/upload/
 
 
