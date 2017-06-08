@@ -9,7 +9,7 @@ Building and uploading psycopg2 packages
     :alt: Linux and OSX packages build status
 
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/psycopg/psycopg2-wheels?branch=master&svg=true
-    :target: https://ci.appveyor.com/project/psycopg/psycopg2-wheels
+    :target: https://ci.appveyor.com/project/psycopg/psycopg2-wheels/branch/master
     :alt: Windows packages build status
 
 This project is used to create binary packages of psycopg2_. It creates:
