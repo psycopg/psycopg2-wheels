@@ -2,7 +2,7 @@
 
 # Download and build a postgres package
 # The PGVER env variable should be set to the patch-level version to work on
-# (e.g. '7.4.10')
+# (e.g. '7.4.10', '10.2')
 
 set -e -x
 
@@ -10,8 +10,9 @@ export PACKAGE=${PACKAGE:-$(echo "$PGVER" | sed 's/\([0-9]\+\.[0-9]\+\).*/\1/')}
 export URL=${URL:-https://ftp.postgresql.org/pub/source/v${PGVER}/postgresql-${PGVER}.tar.gz}
 
 # Version as number (e.g. 70410)
-export VERNUM=$(( $(echo $PGVER \
-    | sed 's/\(.\+\)\.\(.\+\)\.\(.\+\)/10000 * \1 + 100 * \2 + \3/') ))
+export VERNUM=$(echo $PGVER \
+    | sed 's/\([0-9]\+\)\.\(\([0-9]\+\)\.\)\?\([0-9]\+\)/10000 * \1 + 100 * 0\3 + \4/' \
+    | bc)
 
 # Download into a directory and try to work out what download
 mkdir incoming
@@ -20,8 +21,8 @@ wget -O - "$URL" | tar xzf -
 cd $(ls -t1 | head -1)
 
 ./configure \
-	--prefix "/usr/lib/postgresql/${PACKAGE}" \
-	CFLAGS="-Wno-aggressive-loop-optimizations"
+    --prefix "/usr/lib/postgresql/${PACKAGE}" \
+    CFLAGS="-Wno-aggressive-loop-optimizations"
 
 make
 sudo make install
