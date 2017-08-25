@@ -25,6 +25,22 @@ for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/psycopg2/wheels/
 done
 
+# Patch auditwheel to avoid including libresolv
+(cd /opt/_internal/cpython-3.6.0/lib/python3.6/site-packages/ && patch -p1) << 'EOF'
+diff --git a/auditwheel/policy/policy.json b/auditwheel/policy/policy.json
+index ed37aaf..fe13834 100644
+--- a/auditwheel/policy/policy.json
++++ b/auditwheel/policy/policy.json
+@@ -24,6 +24,6 @@
+          "libc.so.6", "libnsl.so.1", "libutil.so.1", "libpthread.so.0",
+          "libX11.so.6", "libXext.so.6", "libXrender.so.1", "libICE.so.6",
+          "libSM.so.6", "libGL.so.1", "libgobject-2.0.so.0",
+-         "libgthread-2.0.so.0", "libglib-2.0.so.0"
++         "libgthread-2.0.so.0", "libglib-2.0.so.0", "libresolv.so.2"
+      ]}
+ ]
+EOF
+
 # Bundle external shared libraries into the wheels
 for WHL in /build/psycopg2/wheels/*.whl; do
     auditwheel repair "$WHL" -w "$DISTDIR"
