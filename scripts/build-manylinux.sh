@@ -26,7 +26,8 @@ for PYBIN in /opt/python/*/bin; do
 done
 
 # Patch auditwheel to avoid including libresolv
-(cd /opt/_internal/cpython-3.6.0/lib/python3.6/site-packages/ && patch -p1) << 'EOF'
+POLICY=/opt/_internal/cpython-3.6.0/lib/python3.6/site-packages/auditwheel/policy/policy.json
+grep -q libresolv $POLICY || patch $POLICY << 'EOF'
 diff --git a/auditwheel/policy/policy.json b/auditwheel/policy/policy.json
 index ed37aaf..fe13834 100644
 --- a/auditwheel/policy/policy.json
