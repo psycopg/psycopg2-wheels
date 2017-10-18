@@ -156,8 +156,8 @@ install:
         }
     # Download OpenSSL source
     - CD C:\Others
-    - IF NOT EXIST OpenSSL_1_0_2k.zip (
-        curl -fsSL -o OpenSSL_1_0_2k.zip https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.zip
+    - IF NOT EXIST OpenSSL_1_0_2l.zip (
+        curl -fsSL -o OpenSSL_1_0_2l.zip https://github.com/openssl/openssl/archive/OpenSSL_1_0_2l.zip
       )
 
     # To use OpenSSL >= 1.1.0, both libpq and psycopg build environments have
@@ -169,15 +169,15 @@ install:
     #    - nmake build_libs install_dev
     - IF NOT EXIST %OPENSSLTOP%\lib\ssleay32.lib (
         CD %BUILD_DIR% &&
-        7z x C:\Others\OpenSSL_1_0_2k.zip &&
-        CD openssl-OpenSSL_1_0_2k &&
+        7z x C:\Others\OpenSSL_1_0_2l.zip &&
+        CD openssl-OpenSSL_1_0_2l &&
         perl Configure %TARGET% no-asm no-shared no-zlib --prefix=%OPENSSLTOP% --openssldir=%OPENSSLTOP% &&
         CALL ms\%DO% &&
         nmake -f ms\nt.mak init headers lib &&
         COPY inc32\openssl\*.h %OPENSSLTOP%\include\openssl &&
         COPY out32\*.lib %OPENSSLTOP%\lib &&
         CD %BASE_DIR% &&
-        RMDIR /S /Q %BUILD_DIR%\openssl-OpenSSL_1_0_2k
+        RMDIR /S /Q %BUILD_DIR%\openssl-OpenSSL_1_0_2l
       )
 
     # Setup directories for building PostgreSQL librarires
