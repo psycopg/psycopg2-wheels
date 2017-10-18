@@ -11,7 +11,7 @@ export VERSION=$(grep -e ^PSYCOPG_VERSION setup.py | sed "s/.*'\(.*\)'/\1/")
 python setup.py sdist -d "dist/psycopg2-$VERSION"
 
 # install and test
-pip install "dist/psycopg2-$VERSION"/*
+sudo pip install "dist/psycopg2-$VERSION"/*
 
 export PSYCOPG2_TESTDB_USER=postgres
 export PSYCOPG2_TEST_FAST=1
