@@ -117,7 +117,7 @@ init:
 
     # Change PostgreSQL config before service starts to allow > 1 prepared
     #   transactions for test cases
-    - ECHO max_prepared_transactions = 10 >> "C:\\Program Files\\PostgreSQL\\9.5\\data\\postgresql.conf"
+    - ECHO max_prepared_transactions = 10 >> "C:\\Program Files\\PostgreSQL\\10\\data\\postgresql.conf"
 
 
 # Repository gets cloned, Cache is restored
@@ -189,19 +189,19 @@ install:
     - IF NOT EXIST %PGTOP%\lib MKDIR %PGTOP%\lib
     # Download PostgreSQL source
     - CD C:\Others
-    - IF NOT EXIST postgres-REL9_6_2.zip (
-        curl -fsSL -o postgres-REL9_6_2.zip https://github.com/postgres/postgres/archive/REL9_6_2.zip
+    - IF NOT EXIST postgres-REL_10_0.zip (
+        curl -fsSL -o postgres-REL_10_0.zip https://github.com/postgres/postgres/archive/REL_10_0.zip
       )
 
     # Setup build config file (config.pl)
     # Build libpgport first
     # Build libpq
     # NOTE: Cannot set and use the same variable inside an IF
-    - SET PGBUILD=%BUILD_DIR%\postgres-REL9_6_2
+    - SET PGBUILD=%BUILD_DIR%\postgres-REL_10_0
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
         CD %BUILD_DIR% &&
-        7z x C:\Others\postgres-REL9_6_2.zip &&
-        CD postgres-REL9_6_2\src\tools\msvc &&
+        7z x C:\Others\postgres-REL_10_0.zip &&
+        CD postgres-REL_10_0\src\tools\msvc &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
@@ -228,7 +228,7 @@ build: off
 
 build_script:
     # Add PostgreSQL binaries to the path
-    - PATH=C:\Program Files\PostgreSQL\9.5\bin\;%PATH%
+    - PATH=C:\Program Files\PostgreSQL\10\bin\;%PATH%
     - CD C:\Project
 
     # Update the psycopg2 submodule

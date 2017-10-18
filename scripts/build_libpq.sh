@@ -6,11 +6,11 @@ set -e -x
 
 OPENSSL_VERSION="1.0.2l"
 LDAP_VERSION="2.4.44"
-POSTGRES_VERSION="9.6.2"
+POSTGRES_VERSION="10.0"
 
 OPENSSL_TAG="OpenSSL_${OPENSSL_VERSION//./_}"
 LDAP_TAG="${LDAP_VERSION}"
-POSTGRES_TAG="REL${POSTGRES_VERSION//./_}"
+POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
 
 yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
