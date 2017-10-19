@@ -17,8 +17,12 @@ set -e -x
 
 PYVERSIONS="2.7.13 3.4.4 3.5.3 3.6.0"
 
-brew update
+brew update --quiet
 brew install gnu-sed
+
+brew tap petere/postgresql
+brew install postgresql@10
+export PATH=/usr/local/opt/postgresql@10/bin:$PATH
 
 # Find psycopg version
 VERSION=$(grep -e ^PSYCOPG_VERSION psycopg2/setup.py | gsed "s/.*'\(.*\)'/\1/")
@@ -40,7 +44,7 @@ build_wheels () {
     fi
 
     PYINST="python-${PYVER3}-macosx10.6.${PKGEXT}"
-    wget "https://www.python.org/ftp/python/${PYVER3}/$PYINST"
+    wget --quiet "https://www.python.org/ftp/python/${PYVER3}/$PYINST"
 
     if [ "$PKGEXT" == "dmg" ]; then
         hdiutil attach $PYINST -mountpoint /Volumes/Python
