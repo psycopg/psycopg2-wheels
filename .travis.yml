@@ -10,6 +10,10 @@ services:
 addons:
     postgresql: 9.6
 
+env:
+    global:
+        - WANT_LIBPQ="100000"
+
 matrix:
     include:
         - env:

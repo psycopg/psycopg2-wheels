@@ -62,8 +62,10 @@ for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.__libpq_version__)"
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
-    # TODO: error if we are not using the expected libpq library
-    # "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(100000 != psycopg2.extensions.libpq_version())"
+    # fail if we are not using the expected libpq library
+    if [[ -n "$WANT_LIBPQ" ]]; then
+        "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
+    fi
 
     "${PYBIN}/python" -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 done
