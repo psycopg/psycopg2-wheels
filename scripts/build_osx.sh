@@ -98,6 +98,15 @@ test_wheels () {
     export PSYCOPG2_TESTDB_USER=postgres
     export PSYCOPG2_TESTDB_FAST=1
     pip install psycopg2 --no-index -f "$DISTDIR"
+
+    # Print psycopg and libpq versions
+    python -c "import psycopg2; print(psycopg2.__version__)"
+    python -c "import psycopg2; print(psycopg2.__libpq_version__)"
+    python -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
+
+    # TODO: error if we are not using the expected libpq library
+    # python -c "import psycopg2, sys; sys.exit(100000 != psycopg2.extensions.libpq_version())"
+
     python -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 
     # Reset python to whatever

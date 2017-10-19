@@ -56,5 +56,14 @@ export PSYCOPG2_TESTDB_HOST=$(ip route show | awk '/default/ {print $3}')
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" install psycopg2 --no-index -f "$DISTDIR"
+
+    # Print psycopg and libpq versions
+    "${PYBIN}/python" -c "import psycopg2; print(psycopg2.__version__)"
+    "${PYBIN}/python" -c "import psycopg2; print(psycopg2.__libpq_version__)"
+    "${PYBIN}/python" -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
+
+    # TODO: error if we are not using the expected libpq library
+    # "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(100000 != psycopg2.extensions.libpq_version())"
+
     "${PYBIN}/python" -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 done

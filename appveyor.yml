@@ -258,12 +258,20 @@ before_test:
 test_script:
     - "%PYTHON%/Scripts/pip.exe --version"
     - "%PYTHON%/Scripts/pip.exe install --no-index -f %DISTDIR% psycopg2"
-    - ps: $env:PSYCOPG2_TEST_FAST = "1"
+
     # Make sure we are not in a directory where we might import a
     # different version of psycopg2
     - CD \
 
+    # Print psycopg and libpq versions
     - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.__version__)\""
+    - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.__libpq_version__)\""
+    - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.extensions.libpq_version())\""
+
+    # TODO: error if we are not using the expected libpq library
+    # - "%PYTHON%\\python.exe -c \"import psycopg2, sys; sys.exit(100000 != psycopg2.extensions.libpq_version())\""
+
+    - ps: $env:PSYCOPG2_TEST_FAST = "1"
     - "%PYTHON%\\python.exe -c \"from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')\""
 
 after_test:
