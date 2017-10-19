@@ -108,8 +108,10 @@ test_wheels () {
     python -c "import psycopg2; print(psycopg2.__libpq_version__)"
     python -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
-    # TODO: error if we are not using the expected libpq library
-    # python -c "import psycopg2, sys; sys.exit(100000 != psycopg2.extensions.libpq_version())"
+    # fail if we are not using the expected libpq library
+    if [[ -n "$WANT_LIBPQ" ]]; then
+        python -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
+    fi
 
     python -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 
@@ -131,4 +133,3 @@ done
 
 # just because I'm a boy scout
 mv "${LIBPQ}-bye" "$LIBPQ"
-
