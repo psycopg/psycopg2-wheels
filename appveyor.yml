@@ -76,6 +76,8 @@ matrix:
 
 services:
     - postgresql96
+    # Reminder, don't forget to change the path in the 'init' section where we
+    #   set a variable for the postgresql server config
 
 cache:
   # Rebuild cache if following file changes
@@ -194,8 +196,13 @@ install:
       )
 
     # Setup build config file (config.pl)
-    # Build libpgport first
+    # Hack the Mkvcbuild.pm file so we build the lib version of libpq
+    # Build libpgport
+    # Build libpgcommon
+    # Build libpgfeutils
     # Build libpq
+    # Copy over includes
+    # Copy over built libraries
     # NOTE: Cannot set and use the same variable inside an IF
     - SET PGBUILD=%BUILD_DIR%\postgres-REL_10_0
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
@@ -206,13 +213,14 @@ install:
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
         ECHO 1;>> config.pl &&
+        perl -pi.bak -e "s/'libpq', 'dll'/'libpq', 'lib'/g" Mkvcbuild.pm &&
         build libpgport &&
+        build libpgcommon &&
+        build libpq &&
         XCOPY /E ..\..\include %PGTOP%\include &&
         COPY %PGBUILD%\Release\libpgport\libpgport.lib %PGTOP%\lib &&
-        CD ..\..\interfaces\libpq &&
-        nmake -f win32.mak USE_OPENSSL=1 ENABLE_THREAD_SAFETY=1 SSL_INC=%OPENSSLTOP%\include  SSL_LIB_PATH=%OPENSSLTOP%\lib config .\Release\libpq.lib &&
-        COPY *.h %PGTOP%\include &&
-        COPY Release\libpq.lib %PGTOP%\lib &&
+        COPY %PGBUILD%\Release\libpgcommon\libpgcommon.lib %PGTOP%\lib &&
+        COPY %PGBUILD%\Release\libpq\libpq.lib %PGTOP%\lib &&
         CD %BASE_DIR% &&
         RMDIR /S /Q %PGBUILD%
       )
@@ -237,7 +245,7 @@ build_script:
     - CD C:\Project\psycopg2
     - ps: $env:PYVERDIR = (Select-String setup.py -pattern "^PSYCOPG_VERSION = '(.*)'").Matches.Groups[1].Value
     - ps: $env:DISTDIR = "C:\\Project\\psycopg2\\dist\\psycopg2-" + $env:PYVERDIR
-    - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include"
+    - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -l libpgport -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include"
     - "%PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%"
     - "%PYTHON%\\python.exe setup.py bdist_wheel -d %DISTDIR%"
 
