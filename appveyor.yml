@@ -307,6 +307,13 @@ on_success: # Script
     - sha1sum -b psycopg2-%PYVERDIR%/*
     - CD ..
 
+    # If we are not on the psycopg AppVeyor account, the environment variable
+    # REMOTE_KEY will not be decrypted and therefor undefined.  Define it with
+    # a string so that we do not get errors when building outside the psycopg
+    # account
+    - ps: If (-not (Test-Path env:REMOTE_KEY)) { $env:REMOTE_KEY = 'empty' }
+
+
     # Insert SSH Private Key from environment variable
     - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
     - ps: $fileContent += $env:REMOTE_KEY.Replace(" ", "`n")
@@ -315,8 +322,9 @@ on_success: # Script
 
     # Make a directory to please MinGW's version of ssh
     - MKDIR C:\MinGW\msys\1.0\home\appveyor\.ssh
-    # Only upload if the computer is 'online'
-    - ps: If (Test-Connection -ComputerName initd.org -Count 1 -Quiet) { C:\MinGW\msys\1.0\bin\rsync -avr -e "C:\\MinGW\\msys\\1.0\\bin\\ssh -i C:\\Project\\id_rsa -o UserKnownHostsFile=C:\\Project\\known_hosts" "dist/" "upload@initd.org:" }
+    # Only upload if the computer is 'online' and being built by the psycopg
+    # AppVeyor account
+    - ps: If (($env:APPVEYOR_ACCOUNT_NAME -eq "psycopg") -and (Test-Connection -ComputerName initd.org -Count 1 -Quiet)) { C:\MinGW\msys\1.0\bin\rsync -avr -e "C:\\MinGW\\msys\\1.0\\bin\\ssh -i C:\\Project\\id_rsa -o UserKnownHostsFile=C:\\Project\\known_hosts" "dist/" "upload@initd.org:" }
 # Cache is saved after ending of on_success
 
 #build_failure: # Webhooks
