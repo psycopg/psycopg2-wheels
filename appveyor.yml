@@ -60,6 +60,8 @@ environment:
           PYTHON_ARCH: 32
           VS_VER: 10.0
 
+    WANT_LIBPQ: 100000
+
     PSYCOPG2_TESTDB: psycopg2_test
     PSYCOPG2_TESTDB_USER: postgres
     PSYCOPG2_TESTDB_PASSWORD: Password12!
@@ -281,8 +283,8 @@ test_script:
     - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.__libpq_version__)\""
     - "%PYTHON%\\python.exe -c \"import psycopg2; print(psycopg2.extensions.libpq_version())\""
 
-    # TODO: error if we are not using the expected libpq library
-    # - "%PYTHON%\\python.exe -c \"import psycopg2, sys; sys.exit(100000 != psycopg2.extensions.libpq_version())\""
+    # fail if we are not using the expected libpq library
+    - "%PYTHON%\\python.exe -c \"import os, sys, psycopg2; sys.exit(int(os.environ['WANT_LIBPQ']) != psycopg2.extensions.libpq_version())\""
 
     - ps: $env:PSYCOPG2_TEST_FAST = "1"
     - "%PYTHON%\\python.exe -c \"from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')\""
