@@ -117,6 +117,11 @@ init:
     - IF "%PYTHON_ARCH%"=="32" (CALL "C:\\Program Files (x86)\\Microsoft Visual Studio %VS_VER%\\VC\\vcvarsall.bat" x86)
     - IF "%PYTHON_ARCH%"=="64" (CALL "C:\\Program Files (x86)\\Microsoft Visual Studio %VS_VER%\\VC\\vcvarsall.bat" amd64)
 
+    # The program rc.exe on 64bit with some versions look in the wrong path
+    #   location when building postgresql.   This cheats by copying the x64 bit
+    #   files to that location.
+    - IF "%PYTHON_ARCH%"=="64" (COPY /Y "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Bin\\x64\\rc*" "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Bin")
+
     # Change PostgreSQL config before service starts to allow > 1 prepared
     #   transactions for test cases
     - ECHO max_prepared_transactions = 10 >> "C:\\Program Files\\PostgreSQL\\9.6\\data\\postgresql.conf"
@@ -189,6 +194,8 @@ install:
     - SET PGTOP=%BASE_DIR%\postgresql
     - IF NOT EXIST %PGTOP%\include MKDIR %PGTOP%\include
     - IF NOT EXIST %PGTOP%\lib MKDIR %PGTOP%\lib
+    - IF NOT EXIST %PGTOP%\bin MKDIR %PGTOP%\bin
+
     # Download PostgreSQL source
     - CD C:\Others
     - IF NOT EXIST postgres-REL_10_0.zip (
@@ -201,8 +208,10 @@ install:
     # Build libpgcommon
     # Build libpgfeutils
     # Build libpq
-    # Copy over includes
+    # Install Includes
     # Copy over built libraries
+    # Prepare local include directory for building from
+    # Build pg_config in place
     # NOTE: Cannot set and use the same variable inside an IF
     - SET PGBUILD=%BUILD_DIR%\postgres-REL_10_0
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
@@ -217,10 +226,16 @@ install:
         build libpgport &&
         build libpgcommon &&
         build libpq &&
-        XCOPY /E ..\..\include %PGTOP%\include &&
+        ECHO "" > %PGBUILD%\src\backend\parser\gram.h &&
+        perl -pi.bak -e "s/qw\(Install\)/qw\(Install CopyIncludeFiles\)/g" Install.pm &&
+        perl -MInstall=CopyIncludeFiles -e"chdir('../../..'); CopyIncludeFiles('%PGTOP%')" &&
         COPY %PGBUILD%\Release\libpgport\libpgport.lib %PGTOP%\lib &&
         COPY %PGBUILD%\Release\libpgcommon\libpgcommon.lib %PGTOP%\lib &&
         COPY %PGBUILD%\Release\libpq\libpq.lib %PGTOP%\lib &&
+        XCOPY /Y /S %PGBUILD%\src\include\port\win32\* %PGBUILD%\src\include &&
+        XCOPY /Y /S %PGBUILD%\src\include\port\win32_msvc\* %PGBUILD%\src\include &&
+        CD %PGBUILD%\src\bin\pg_config &&
+        cl pg_config.c /MT /nologo /I%PGBUILD%\src\include /link /LIBPATH:%PGTOP%\lib libpgcommon.lib libpgport.lib advapi32.lib /NODEFAULTLIB:libcmt.lib /OUT:%PGTOP%\bin\pg_config.exe &&
         CD %BASE_DIR% &&
         RMDIR /S /Q %PGBUILD%
       )
@@ -245,7 +260,7 @@ build_script:
     - CD C:\Project\psycopg2
     - ps: $env:PYVERDIR = (Select-String setup.py -pattern "^PSYCOPG_VERSION = '(.*)'").Matches.Groups[1].Value
     - ps: $env:DISTDIR = "C:\\Project\\psycopg2\\dist\\psycopg2-" + $env:PYVERDIR
-    - "%PYTHON%\\python.exe setup.py build_ext --have-ssl -l libpgcommon -l libpgport -L %OPENSSLTOP%\\lib;%PGTOP%\\lib -I %OPENSSLTOP%\\include;%PGTOP%\\include"
+    - "%PYTHON%\\python.exe setup.py build_ext --have-ssl --pg-config %PGTOP%\\bin\\pg_config.exe -l libpgcommon -l libpgport -L %OPENSSLTOP%\\lib -I %OPENSSLTOP%\\include"
     - "%PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%"
     - "%PYTHON%\\python.exe setup.py bdist_wheel -d %DISTDIR%"
 
@@ -302,6 +317,13 @@ on_success: # Script
     - sha1sum -b psycopg2-%PYVERDIR%/*
     - CD ..
 
+    # If we are not on the psycopg AppVeyor account, the environment variable
+    # REMOTE_KEY will not be decrypted and therefor undefined.  Define it with
+    # a string so that we do not get errors when building outside the psycopg
+    # account
+    - ps: If (-not (Test-Path env:REMOTE_KEY)) { $env:REMOTE_KEY = 'empty' }
+
+
     # Insert SSH Private Key from environment variable
     - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
     - ps: $fileContent += $env:REMOTE_KEY.Replace(" ", "`n")
@@ -310,8 +332,9 @@ on_success: # Script
 
     # Make a directory to please MinGW's version of ssh
     - MKDIR C:\MinGW\msys\1.0\home\appveyor\.ssh
-    # Only upload if the computer is 'online'
-    - ps: If (Test-Connection -ComputerName initd.org -Count 1 -Quiet) { C:\MinGW\msys\1.0\bin\rsync -avr -e "C:\\MinGW\\msys\\1.0\\bin\\ssh -i C:\\Project\\id_rsa -o UserKnownHostsFile=C:\\Project\\known_hosts" "dist/" "upload@initd.org:" }
+    # Only upload if the computer is 'online' and being built by the psycopg
+    # AppVeyor account
+    - ps: If (($env:APPVEYOR_ACCOUNT_NAME -eq "psycopg") -and (Test-Connection -ComputerName initd.org -Count 1 -Quiet)) { C:\MinGW\msys\1.0\bin\rsync -avr -e "C:\\MinGW\\msys\\1.0\\bin\\ssh -i C:\\Project\\id_rsa -o UserKnownHostsFile=C:\\Project\\known_hosts" "dist/" "upload@initd.org:" }
 # Cache is saved after ending of on_success
 
 #build_failure: # Webhooks
