@@ -1,6 +1,7 @@
 version : 2.x.{build}
 
 clone_folder: C:\Project
+
 environment:
     global:
         # MSVC Express 2008's setenv.cmd failes if /E:ON and /V:ON are not
@@ -13,52 +14,52 @@ environment:
         # For Python versions available on Appveyor, see
         # http://www.appveyor.com/docs/installed-software#python
 
-        - PYTHON: C:\Python27
-          PYTHON_ARCH: 32
-          # VS 2008
-          VS_VER: 9.0
-        - PYTHON: C:\Python33
-          PYTHON_ARCH: 32
-          # VS 2010
-          VS_VER: 10.0
-        - PYTHON: C:\Python34
-          PYTHON_ARCH: 32
-          # VS 2010
-          VS_VER: 10.0
-        - PYTHON: C:\Python35
-          PYTHON_ARCH: 32
-          # VS 2015
-          VS_VER: 14.0
-        - PYTHON: C:\Python36
-          PYTHON_ARCH: 32
-          # VS 2015
-          VS_VER: 14.0
+        # Py 2.7 = VS Ver. 9.0  (VS 2008)
+        # Py 3.3, 3.4 = VS Ver. 10.0 (VS 2010)
+        # Py 3.5, 3.6 = VS Ver. 14.0 (VS 2015)
+
         - PYTHON: C:\Python27-x64
           PYTHON_ARCH: 64
-          # VS 2008
           VS_VER: 9.0
-        - PYTHON: C:\Python33-x64
-          DISTUTILS_USE_SDK: '1'
+
+        - PYTHON: C:\Python27
+          PYTHON_ARCH: 32
+          VS_VER: 9.0
+
+        - PYTHON: C:\Python36-x64
           PYTHON_ARCH: 64
-          # VS 2010
-          VS_VER: 10.0
+          VS_VER: 14.0
+
+        - PYTHON: C:\Python36
+          PYTHON_ARCH: 32
+          VS_VER: 14.0
+
+        - PYTHON: C:\Python35-x64
+          PYTHON_ARCH: 64
+          VS_VER: 14.0
+
+        - PYTHON: C:\Python35
+          PYTHON_ARCH: 32
+          VS_VER: 14.0
+
         - PYTHON: C:\Python34-x64
           DISTUTILS_USE_SDK: '1'
           PYTHON_ARCH: 64
-          # VS 2010
           VS_VER: 10.0
-        - PYTHON: C:\Python35-x64
-          PYTHON_ARCH: 64
-          # VS 2015
-          VS_VER: 14.0
-        - PYTHON: C:\Python36-x64
-          PYTHON_ARCH: 64
-          # VS 2015
-          VS_VER: 14.0
 
-        #Py27 = 9.0  (VS 2008)
-        #Py 3.3,3.4 = 10.0 (VS 2010)
-        #Py 3.5,3.6 = 14.0 (VS 2015)
+        - PYTHON: C:\Python34
+          PYTHON_ARCH: 32
+          VS_VER: 10.0
+
+        - PYTHON: C:\Python33-x64
+          DISTUTILS_USE_SDK: '1'
+          PYTHON_ARCH: 64
+          VS_VER: 10.0
+
+        - PYTHON: C:\Python33
+          PYTHON_ARCH: 32
+          VS_VER: 10.0
+
     PSYCOPG2_TESTDB: psycopg2_test
     PSYCOPG2_TESTDB_USER: postgres
     PSYCOPG2_TESTDB_PASSWORD: Password12!
@@ -75,9 +76,8 @@ matrix:
     fast_finish: false
 
 services:
+    # Note: if you change this service also change the paths to match
     - postgresql96
-    # Reminder, don't forget to change the path in the 'init' section where we
-    #   set a variable for the postgresql server config
 
 cache:
   # Rebuild cache if following file changes
@@ -205,11 +205,8 @@ install:
 
     # Setup build config file (config.pl)
     # Hack the Mkvcbuild.pm file so we build the lib version of libpq
-    # Build libpgport
-    # Build libpgcommon
-    # Build libpgfeutils
-    # Build libpq
-    # Install Includes
+    # Build libpgport, libpgcommon, libpq
+    # Install includes
     # Copy over built libraries
     # Prepare local include directory for building from
     # Build pg_config in place
