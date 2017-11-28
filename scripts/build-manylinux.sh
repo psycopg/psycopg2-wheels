@@ -27,6 +27,9 @@ export DISTDIR="/build/psycopg2/dist/psycopg2-$VERSION"
 
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
+    if $(${PYBIN}/python --version 2>&1  | grep -qE '2\.6|3\.2|3\.3'); then
+        "${PYBIN}/pip" install "wheel<0.30"
+    fi
     "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/psycopg2/wheels/
 done
 
