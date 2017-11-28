@@ -12,8 +12,13 @@
 
 set -e -x
 
-# Create prerequisite libraries
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Create prerequisite libraries
+libdir="$DIR/../libs/$(uname -p)/"
+mkdir -p "$libdir"
+cd "$libdir"
+
 ${DIR}/build_libpq.sh > /dev/null
 
 # Find psycopg version
