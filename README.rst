@@ -70,16 +70,15 @@ You must have your ``~/.pypirc`` file configured__, e.g. ::
         testpypi
 
     [pypi]
-    repository: https://pypi.python.org/pypi/
     username: piro
     password:<whatever>
 
     [testpypi]
-    repository: https://testpypi.python.org/pypi
+    repository: https://test.pypi.org/legacy/
     username: piro
     password:<whatever>
 
-.. __: https://wiki.python.org/moin/TestPyPI
+.. __: https://packaging.python.org/guides/using-testpypi/
 
 Then you can download, sign, and release the packages::
 
