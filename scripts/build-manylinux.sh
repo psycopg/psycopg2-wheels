@@ -10,7 +10,8 @@
 # Tests run against a postgres on the host. Use -e PSYCOPG_TESTDB_USER=... etc
 # to configure tests run.
 
-set -e -x
+set -euo pipefail
+set -x
 
 # Create prerequisite libraries
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -19,6 +20,27 @@ ${DIR}/build_libpq.sh > /dev/null
 # Find psycopg version
 export VERSION=$(grep -e ^PSYCOPG_VERSION /build/psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
 export DISTDIR="/build/psycopg2/dist/psycopg2-$VERSION"
+
+# Replace the package name
+if [[ "${PACKAGE_NAME:-}" ]]; then
+    sed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
+        /build/psycopg2/setup.py
+fi
+
+# Insert a warning to deprecate the wheel version of the base package
+if [[ -z "${PACKAGE_NAME:-}" ]]; then
+    grep -q warnings /build/psycopg2/lib/__init__.py ||
+        cat >> /build/psycopg2/lib/__init__.py << 'EOF'
+
+
+# This is a wheel package: issue a warning on import
+from warnings import warn   # noqa
+warn("""\
+The psycopg2 wheel package will be renamed from release 2.8; \
+to keep using the binary package please install 'psycopg2-binary' instead.\
+""")
+EOF
+fi
 
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
@@ -42,7 +64,7 @@ export PSYCOPG2_TESTDB_HOST=$(ip route show | awk '/default/ {print $3}')
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install psycopg2 --no-index -f "$DISTDIR"
+    "${PYBIN}/pip" install ${PACKAGE_NAME:-psycopg2} --no-index -f "$DISTDIR"
 
     # Print psycopg and libpq versions
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.__version__)"
@@ -50,7 +72,7 @@ for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
     # fail if we are not using the expected libpq library
-    if [[ -n "$WANT_LIBPQ" ]]; then
+    if [[ "${WANT_LIBPQ:-}" ]]; then
         "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     fi
 
