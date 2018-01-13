@@ -5,7 +5,8 @@
 # Following instructions from https://github.com/MacPython/wiki/wiki/Spinning-wheels
 # Cargoculting pieces of implementation from https://github.com/matthew-brett/multibuild
 
-set -e -x
+set -euo pipefail
+set -x
 
 # 2.6.6 not available for 10.6
 # 3.2.5 3.3.5 fail with:
@@ -64,8 +65,31 @@ build_wheels () {
     PYEXE=${PYPREFIX}/${PYVER2}/bin/python${PYVER2}
     ENVDIR="env-${PYVER2}"
     virtualenv -p "$PYEXE" "$ENVDIR"
+    set +u
     source "${ENVDIR}/bin/activate"
+    set -u
     pip install -U pip wheel delocate
+
+    # Replace the package name
+    if [[ "${PACKAGE_NAME:-}" ]]; then
+        gsed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
+            ./psycopg2/setup.py
+    fi
+
+    # Insert a warning to deprecate the wheel version of the base package
+    if [[ -z "${PACKAGE_NAME:-}" ]]; then
+        grep -q warnings ./psycopg2/lib/__init__.py ||
+            cat >> ./psycopg2/lib/__init__.py << 'EOF'
+
+
+# This is a wheel package: issue a warning on import
+from warnings import warn   # noqa
+warn("""\
+The psycopg2 wheel package will be renamed from release 2.8; \
+to keep using the binary package please install 'psycopg2-binary' instead.\
+""")
+EOF
+    fi
 
     # Build the wheels
     WHEELDIR="${ENVDIR}/wheels"
@@ -73,7 +97,7 @@ build_wheels () {
     delocate-listdeps ${WHEELDIR}/*.whl
 
     # Check where is the libpq. I'm gonna kill it for testing
-    if [[ -z "$LIBPQ" ]]; then
+    if [[ -z "${LIBPQ:-}" ]]; then
         export LIBPQ=$(delocate-listdeps ${WHEELDIR}/*.whl | grep libpq)
     fi
 
@@ -83,7 +107,9 @@ build_wheels () {
     cp ${WHEELDIR}/*.whl ${DISTDIR}
 
     # Reset python to whatever
+    set +u
     deactivate
+    set -u
 }
 
 test_wheels () {
@@ -101,7 +127,7 @@ test_wheels () {
     # Install and test the built wheel
     export PSYCOPG2_TESTDB_USER=postgres
     export PSYCOPG2_TESTDB_FAST=1
-    pip install psycopg2 --no-index -f "$DISTDIR"
+    pip install ${PACKAGE_NAME:-psycopg2} --no-index -f "$DISTDIR"
 
     # Print psycopg and libpq versions
     python -c "import psycopg2; print(psycopg2.__version__)"
@@ -109,7 +135,7 @@ test_wheels () {
     python -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
     # fail if we are not using the expected libpq library
-    if [[ -n "$WANT_LIBPQ" ]]; then
+    if [[ "${WANT_LIBPQ:-}" ]]; then
         python -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     fi
 
