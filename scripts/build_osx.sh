@@ -65,7 +65,9 @@ build_wheels () {
     PYEXE=${PYPREFIX}/${PYVER2}/bin/python${PYVER2}
     ENVDIR="env-${PYVER2}"
     virtualenv -p "$PYEXE" "$ENVDIR"
+    set +u
     source "${ENVDIR}/bin/activate"
+    set -u
     pip install -U pip wheel delocate
 
     # Replace the package name
@@ -95,7 +97,7 @@ EOF
     delocate-listdeps ${WHEELDIR}/*.whl
 
     # Check where is the libpq. I'm gonna kill it for testing
-    if [[ -z "$LIBPQ" ]]; then
+    if [[ -z "${LIBPQ:-}" ]]; then
         export LIBPQ=$(delocate-listdeps ${WHEELDIR}/*.whl | grep libpq)
     fi
 
@@ -105,7 +107,9 @@ EOF
     cp ${WHEELDIR}/*.whl ${DISTDIR}
 
     # Reset python to whatever
+    set +u
     deactivate
+    set -u
 }
 
 test_wheels () {
