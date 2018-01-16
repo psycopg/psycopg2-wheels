@@ -2,6 +2,11 @@ version : 2.x.{build}
 
 clone_folder: C:\Project
 
+# We use the configuration to specify the package name
+configuration:
+  - psycopg2
+  - psycopg2-binary
+
 environment:
     global:
         # MSVC Express 2008's setenv.cmd failes if /E:ON and /V:ON are not
@@ -13,52 +18,17 @@ environment:
     matrix:
         # For Python versions available on Appveyor, see
         # http://www.appveyor.com/docs/installed-software#python
+      - {PYVER: "27", PYTHON_ARCH: "32"}
+      - {PYVER: "27", PYTHON_ARCH: "64"}
+      - {PYVER: "33", PYTHON_ARCH: "32"}
+      - {PYVER: "33", PYTHON_ARCH: "64"}
+      - {PYVER: "34", PYTHON_ARCH: "32"}
+      - {PYVER: "34", PYTHON_ARCH: "64"}
+      - {PYVER: "35", PYTHON_ARCH: "32"}
+      - {PYVER: "35", PYTHON_ARCH: "64"}
+      - {PYVER: "36", PYTHON_ARCH: "32"}
+      - {PYVER: "36", PYTHON_ARCH: "64"}
 
-        # Py 2.7 = VS Ver. 9.0  (VS 2008)
-        # Py 3.3, 3.4 = VS Ver. 10.0 (VS 2010)
-        # Py 3.5, 3.6 = VS Ver. 14.0 (VS 2015)
-
-        - PYTHON: C:\Python27-x64
-          PYTHON_ARCH: 64
-          VS_VER: 9.0
-
-        - PYTHON: C:\Python27
-          PYTHON_ARCH: 32
-          VS_VER: 9.0
-
-        - PYTHON: C:\Python36-x64
-          PYTHON_ARCH: 64
-          VS_VER: 14.0
-
-        - PYTHON: C:\Python36
-          PYTHON_ARCH: 32
-          VS_VER: 14.0
-
-        - PYTHON: C:\Python35-x64
-          PYTHON_ARCH: 64
-          VS_VER: 14.0
-
-        - PYTHON: C:\Python35
-          PYTHON_ARCH: 32
-          VS_VER: 14.0
-
-        - PYTHON: C:\Python34-x64
-          DISTUTILS_USE_SDK: '1'
-          PYTHON_ARCH: 64
-          VS_VER: 10.0
-
-        - PYTHON: C:\Python34
-          PYTHON_ARCH: 32
-          VS_VER: 10.0
-
-        - PYTHON: C:\Python33-x64
-          DISTUTILS_USE_SDK: '1'
-          PYTHON_ARCH: 64
-          VS_VER: 10.0
-
-        - PYTHON: C:\Python33
-          PYTHON_ARCH: 32
-          VS_VER: 10.0
 
     WANT_LIBPQ: 100001
 
@@ -90,7 +60,22 @@ cache:
 init:
     # Uncomment next line to get RDP access during the build.
     #- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-    #
+
+    # Set env variable according to the build environment
+    - SET PYTHON=C:\Python%PYVER%
+    - IF "%PYTHON_ARCH%"=="64" SET PYTHON=%PYTHON%-x64
+
+      # Py 2.7 = VS Ver. 9.0  (VS 2008)
+      # Py 3.3, 3.4 = VS Ver. 10.0 (VS 2010)
+      # Py 3.5, 3.6 = VS Ver. 14.0 (VS 2015)
+    - IF "%PYVER%"=="27" SET VS_VER=9.0
+    - IF "%PYVER%"=="33" SET VS_VER=10.0
+    - IF "%PYVER%"=="34" SET VS_VER=10.0
+    - IF "%PYVER%"=="35" SET VS_VER=14.0
+    - IF "%PYVER%"=="36" SET VS_VER=14.0
+
+    - IF "%VS_VER%"=="10.0" IF "%PYTHON_ARCH%"=="64" SET DISTUTILS_USE_SDK=1
+
     # Set Python to the path
     - SET PATH=%PYTHON%;%PYTHON%\Scripts;C:\Program Files\Git\mingw64\bin;%PATH%
 
@@ -98,6 +83,10 @@ init:
     - ECHO *******************************************************************
     - ECHO Python Information
     - ECHO *******************************************************************
+    - ECHO %PYTHON_ARCH%
+    - ECHO %PYVER%
+    - ECHO %VS_VER%
+    - ECHO %DISTUTILS_USE_SDK%
     - "%PYTHON%\\python --version"
     - "%PYTHON%\\python -c \"import sys; print('64bit: ' + str(sys.maxsize > 2**32))\""
 
@@ -260,8 +249,14 @@ build_script:
     - CD C:\Project\psycopg2
     - ps: $env:PYVERDIR = (Select-String setup.py -pattern "^PSYCOPG_VERSION = '(.*)'").Matches.Groups[1].Value
     - ps: $env:DISTDIR = "C:\\Project\\psycopg2\\dist\\psycopg2-" + $env:PYVERDIR
+
+    # Replace the name of the package with what desired
+    - ps: (Get-Content -Path "setup.py") -replace
+        'setup\(name="psycopg2"', "setup(name=""$env:CONFIGURATION""" |
+        Set-Content "setup.py"
+
     - "%PYTHON%\\python.exe setup.py build_ext --have-ssl --pg-config %PGTOP%\\bin\\pg_config.exe -l libpgcommon -l libpgport -L %OPENSSLTOP%\\lib -I %OPENSSLTOP%\\include"
-    - "%PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%"
+    - IF "%CONFIGURATION%"=="psycopg2" %PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%
     - "%PYTHON%\\python.exe setup.py bdist_wheel -d %DISTDIR%"
 
 #after_build:
@@ -272,7 +267,7 @@ before_test:
 
 test_script:
     - "%PYTHON%/Scripts/pip.exe --version"
-    - "%PYTHON%/Scripts/pip.exe install --no-index -f %DISTDIR% psycopg2"
+    - "%PYTHON%/Scripts/pip.exe install --no-index -f %DISTDIR% %CONFIGURATION%"
 
     # Make sure we are not in a directory where we might import a
     # different version of psycopg2
