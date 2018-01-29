@@ -10,7 +10,8 @@
 # Tests run against a postgres on the host. Use -e PSYCOPG_TESTDB_USER=... etc
 # to configure tests run.
 
-set -e -x
+set -euo pipefail
+set -x
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -25,6 +26,29 @@ ${DIR}/build_libpq.sh > /dev/null
 export VERSION=$(grep -e ^PSYCOPG_VERSION /build/psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
 export DISTDIR="/build/psycopg2/dist/psycopg2-$VERSION"
 
+# Replace the package name
+if [[ "${PACKAGE_NAME:-}" ]]; then
+    sed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
+        /build/psycopg2/setup.py
+fi
+
+# Insert a warning to deprecate the wheel version of the base package
+if [[ -z "${PACKAGE_NAME:-}" ]]; then
+    grep -q warnings /build/psycopg2/lib/__init__.py ||
+        cat >> /build/psycopg2/lib/__init__.py << 'EOF'
+
+
+# This is a wheel package: issue a warning on import
+from warnings import warn   # noqa
+warn("""\
+The psycopg2 wheel package will be renamed from release 2.8; in order to \
+keep installing from binary please use "pip install psycopg2-binary" instead. \
+For details see: \
+<http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.\
+""")
+EOF
+fi
+
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
     if $(${PYBIN}/python --version 2>&1  | grep -qE '2\.6|3\.2|3\.3'); then
@@ -33,22 +57,9 @@ for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/psycopg2/wheels/
 done
 
-# Patch auditwheel to avoid including libresolv
-POLICY=/opt/_internal/cpython-3.6.0/lib/python3.6/site-packages/auditwheel/policy/policy.json
-grep -q libresolv $POLICY || patch $POLICY << 'EOF'
-diff --git a/auditwheel/policy/policy.json b/auditwheel/policy/policy.json
-index ed37aaf..fe13834 100644
---- a/auditwheel/policy/policy.json
-+++ b/auditwheel/policy/policy.json
-@@ -24,6 +24,6 @@
-          "libc.so.6", "libnsl.so.1", "libutil.so.1", "libpthread.so.0",
-          "libX11.so.6", "libXext.so.6", "libXrender.so.1", "libICE.so.6",
-          "libSM.so.6", "libGL.so.1", "libgobject-2.0.so.0",
--         "libgthread-2.0.so.0", "libglib-2.0.so.0"
-+         "libgthread-2.0.so.0", "libglib-2.0.so.0", "libresolv.so.2"
-      ]}
- ]
-EOF
+# Make sure auditwheel will not include libresolv
+POLICY=/opt/_internal/cpython-3.6.*/lib/python3.6/site-packages/auditwheel/policy/policy.json
+grep -q libresolv $POLICY
 
 # Bundle external shared libraries into the wheels
 for WHL in /build/psycopg2/wheels/*.whl; do
@@ -63,7 +74,7 @@ export PSYCOPG2_TESTDB_HOST=$(ip route show | awk '/default/ {print $3}')
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install psycopg2 --no-index -f "$DISTDIR"
+    "${PYBIN}/pip" install ${PACKAGE_NAME:-psycopg2} --no-index -f "$DISTDIR"
 
     # Print psycopg and libpq versions
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.__version__)"
@@ -71,7 +82,7 @@ for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
     # fail if we are not using the expected libpq library
-    if [[ -n "$WANT_LIBPQ" ]]; then
+    if [[ "${WANT_LIBPQ:-}" ]]; then
         "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     fi
 
