@@ -31,6 +31,8 @@ environment:
 
 
     WANT_LIBPQ: 100001
+    OPENSSL_VERSION: "1_0_2n"
+    POSTGRES_VERSION: "10_1"
 
     PSYCOPG2_TESTDB: psycopg2_test
     PSYCOPG2_TESTDB_USER: postgres
@@ -49,6 +51,7 @@ matrix:
 
 services:
     # Note: if you change this service also change the paths to match
+    # (see where Program Files\Postgres\9.6 is used)
     - postgresql96
 
 cache:
@@ -83,10 +86,6 @@ init:
     - ECHO *******************************************************************
     - ECHO Python Information
     - ECHO *******************************************************************
-    - ECHO %PYTHON_ARCH%
-    - ECHO %PYVER%
-    - ECHO %VS_VER%
-    - ECHO %DISTUTILS_USE_SDK%
     - "%PYTHON%\\python --version"
     - "%PYTHON%\\python -c \"import sys; print('64bit: ' + str(sys.maxsize > 2**32))\""
 
@@ -155,8 +154,8 @@ install:
         }
     # Download OpenSSL source
     - CD C:\Others
-    - IF NOT EXIST OpenSSL_1_0_2m.zip (
-        curl -fsSL -o OpenSSL_1_0_2m.zip https://github.com/openssl/openssl/archive/OpenSSL_1_0_2m.zip
+    - IF NOT EXIST OpenSSL_%OPENSSL_VERSION%.zip (
+        curl -fsSL -o OpenSSL_%OPENSSL_VERSION%.zip https://github.com/openssl/openssl/archive/OpenSSL_%OPENSSL_VERSION%.zip
       )
 
     # To use OpenSSL >= 1.1.0, both libpq and psycopg build environments have
@@ -168,15 +167,15 @@ install:
     #    - nmake build_libs install_dev
     - IF NOT EXIST %OPENSSLTOP%\lib\ssleay32.lib (
         CD %BUILD_DIR% &&
-        7z x C:\Others\OpenSSL_1_0_2m.zip &&
-        CD openssl-OpenSSL_1_0_2m &&
+        7z x C:\Others\OpenSSL_%OPENSSL_VERSION%.zip &&
+        CD openssl-OpenSSL_%OPENSSL_VERSION% &&
         perl Configure %TARGET% no-asm no-shared no-zlib --prefix=%OPENSSLTOP% --openssldir=%OPENSSLTOP% &&
         CALL ms\%DO% &&
         nmake -f ms\nt.mak init headers lib &&
         COPY inc32\openssl\*.h %OPENSSLTOP%\include\openssl &&
         COPY out32\*.lib %OPENSSLTOP%\lib &&
         CD %BASE_DIR% &&
-        RMDIR /S /Q %BUILD_DIR%\openssl-OpenSSL_1_0_2m
+        RMDIR /S /Q %BUILD_DIR%\openssl-OpenSSL_%OPENSSL_VERSION%
       )
 
     # Setup directories for building PostgreSQL librarires
@@ -190,8 +189,8 @@ install:
 
     # Download PostgreSQL source
     - CD C:\Others
-    - IF NOT EXIST postgres-REL_10_1.zip (
-        curl -fsSL -o postgres-REL_10_1.zip https://github.com/postgres/postgres/archive/REL_10_1.zip
+    - IF NOT EXIST postgres-REL_%POSTGRES_VERSION%.zip (
+        curl -fsSL -o postgres-REL_%POSTGRES_VERSION%.zip https://github.com/postgres/postgres/archive/REL_%POSTGRES_VERSION%.zip
       )
 
     # Setup build config file (config.pl)
@@ -202,11 +201,11 @@ install:
     # Prepare local include directory for building from
     # Build pg_config in place
     # NOTE: Cannot set and use the same variable inside an IF
-    - SET PGBUILD=%BUILD_DIR%\postgres-REL_10_1
+    - SET PGBUILD=%BUILD_DIR%\postgres-REL_%POSTGRES_VERSION%
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
         CD %BUILD_DIR% &&
-        7z x C:\Others\postgres-REL_10_1.zip &&
-        CD postgres-REL_10_1\src\tools\msvc &&
+        7z x C:\Others\postgres-REL_%POSTGRES_VERSION%.zip &&
+        CD postgres-REL_%POSTGRES_VERSION%\src\tools\msvc &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
