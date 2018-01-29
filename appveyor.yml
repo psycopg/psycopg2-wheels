@@ -2,6 +2,10 @@ version : 2.x.{build}
 
 clone_folder: C:\Project
 
+# We use the configuration to specify the package name
+configuration:
+  - psycopg2-binary
+
 environment:
     global:
         # MSVC Express 2008's setenv.cmd failes if /E:ON and /V:ON are not
@@ -260,8 +264,14 @@ build_script:
     - CD C:\Project\psycopg2
     - ps: $env:PYVERDIR = (Select-String setup.py -pattern "^PSYCOPG_VERSION = '(.*)'").Matches.Groups[1].Value
     - ps: $env:DISTDIR = "C:\\Project\\psycopg2\\dist\\psycopg2-" + $env:PYVERDIR
+
+    # Replace the name of the package with what desired
+    - ps: (Get-Content -Path "setup.py") -replace
+        'setup\(name="psycopg2"', "setup(name=""$env:CONFIGURATION""" |
+        Set-Content "setup.py"
+
     - "%PYTHON%\\python.exe setup.py build_ext --have-ssl --pg-config %PGTOP%\\bin\\pg_config.exe -l libpgcommon -l libpgport -L %OPENSSLTOP%\\lib -I %OPENSSLTOP%\\include"
-    - "%PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%"
+    - IF "%CONFIGURATION%"=="psycopg2" %PYTHON%\\python.exe setup.py bdist_wininst -d %DISTDIR%
     - "%PYTHON%\\python.exe setup.py bdist_wheel -d %DISTDIR%"
 
 #after_build:
@@ -272,7 +282,7 @@ before_test:
 
 test_script:
     - "%PYTHON%/Scripts/pip.exe --version"
-    - "%PYTHON%/Scripts/pip.exe install --no-index -f %DISTDIR% psycopg2"
+    - "%PYTHON%/Scripts/pip.exe install --no-index -f %DISTDIR% %CONFIGURATION%"
 
     # Make sure we are not in a directory where we might import a
     # different version of psycopg2
