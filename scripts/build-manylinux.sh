@@ -41,8 +41,10 @@ if [[ -z "${PACKAGE_NAME:-}" ]]; then
 # This is a wheel package: issue a warning on import
 from warnings import warn   # noqa
 warn("""\
-The psycopg2 wheel package will be renamed from release 2.8; \
-to keep using the binary package please install 'psycopg2-binary' instead.\
+The psycopg2 wheel package will be renamed from release 2.8; in order to \
+keep installing from binary please use "pip install psycopg2-binary" instead. \
+For details see: \
+<http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.\
 """)
 EOF
 fi
