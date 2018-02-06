@@ -137,9 +137,10 @@ test_wheels () {
     python -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
     # fail if we are not using the expected libpq library
-    if [[ "${WANT_LIBPQ:-}" ]]; then
-        python -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
-    fi
+    # Disabled as we just use what's available on the system on OSX
+    # if [[ "${WANT_LIBPQ:-}" ]]; then
+    #     python -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
+    # fi
 
     python -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 
