@@ -7,6 +7,12 @@ cd $TRAVIS_BUILD_DIR/psycopg2
 # Find psycopg version
 export VERSION=$(grep -e ^PSYCOPG_VERSION setup.py | sed "s/.*'\(.*\)'/\1/")
 
+# Replace the package name
+if [[ "${PACKAGE_NAME:-}" ]]; then
+    sed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
+        setup.py
+fi
+
 # Build the source package
 python setup.py sdist -d "dist/psycopg2-$VERSION"
 
