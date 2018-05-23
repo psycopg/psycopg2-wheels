@@ -22,7 +22,7 @@ brew update --quiet
 brew install gnu-sed
 
 brew tap petere/postgresql
-brew install postgresql@10
+brew upgrade postgresql
 export PATH=/usr/local/opt/postgresql@10/bin:$PATH
 
 # Find psycopg version
