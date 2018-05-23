@@ -12,7 +12,7 @@ addons:
 
 env:
     global:
-        - WANT_LIBPQ="100001"
+        - WANT_LIBPQ="100004"
 
 matrix:
     include:
