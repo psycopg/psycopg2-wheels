@@ -3,6 +3,7 @@
 # Build a modern version of libpq and depending libs from source on Centos 5
 
 set -e -x
+set -o pipefail
 
 OPENSSL_VERSION="1.0.2o"
 LDAP_VERSION="2.4.44"
