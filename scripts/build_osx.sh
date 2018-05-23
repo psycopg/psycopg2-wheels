@@ -21,8 +21,10 @@ PYVERSIONS="2.7.13 3.4.4 3.5.3 3.6.0"
 brew update > /dev/null
 brew install gnu-sed
 
+brew uninstall postgresql postgis
 brew tap petere/postgresql
-brew upgrade postgresql
+brew install postgresql@10
+
 export PATH=/usr/local/opt/postgresql@10/bin:$PATH
 
 # Find psycopg version
@@ -157,12 +159,15 @@ for i in $PYVERSIONS; do
     build_wheels $i
 done
 
-# kill the libpq to make sure tests don't depend on it
-mv "$LIBPQ" "${LIBPQ}-bye"
+# now we have a postgres 9.6 running (from the .travis.yml file) but postgres
+# 10 has overridden the symlink used as lib directory by the running server:
+# this will make some tests fail. So get rid of the newer postgres and restore
+# the symlink.
+
+brew uninstall postgresql
+brew install postgresql@9.6
+ln -s $(/usr/local/Cellar/postgresql@9.6/*/bin/pg_config --libdir) /usr/local/lib/postgresql
 
 for i in $PYVERSIONS; do
     test_wheels $i
 done
-
-# just because I'm a boy scout
-mv "${LIBPQ}-bye" "$LIBPQ"
