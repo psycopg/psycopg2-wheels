@@ -18,7 +18,7 @@ yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
 # Build openssl if needed
 if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
-    wget -q -O - \
+    curl -sL \
         https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
         | tar xzf -
 
@@ -52,7 +52,7 @@ cd ..
 
 # Build openldap if needed
 if [ ! -d "openldap-${LDAP_TAG}/" ]; then
-    wget -q -O - \
+    curl -sL \
         ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_TAG}.tgz \
         | tar xzf -
 
@@ -78,7 +78,7 @@ cd ..
 
 # Build libpq if needed
 if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
-    wget -q -O - \
+    curl -sL \
         https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
         | tar xzf -
 
