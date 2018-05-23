@@ -68,7 +68,11 @@ build_wheels () {
     set +u
     source "${ENVDIR}/bin/activate"
     set -u
-    pip install -U pip wheel delocate
+
+    # Install pip without pip because now pip has a problem pipping pip
+    # https://github.com/geerlingguy/mac-dev-playbook/issues/61
+    wget --quiet -O - https://bootstrap.pypa.io/get-pip.py | python
+    pip install -U wheel delocate
 
     # Replace the package name
     if [[ "${PACKAGE_NAME:-}" ]]; then
