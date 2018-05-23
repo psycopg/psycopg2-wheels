@@ -18,7 +18,7 @@ set -x
 
 PYVERSIONS="2.7.13 3.4.4 3.5.3 3.6.0"
 
-brew update --quiet
+brew update > /dev/null
 brew install gnu-sed
 
 brew tap petere/postgresql
