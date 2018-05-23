@@ -53,7 +53,7 @@ cd ..
 # Build openldap if needed
 if [ ! -d "openldap-${LDAP_TAG}/" ]; then
     curl -sL \
-        ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-${LDAP_TAG}.tgz \
+        https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${LDAP_TAG}.tgz \
         | tar xzf -
 
     cd "openldap-${LDAP_TAG}/"
