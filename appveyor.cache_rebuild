@@ -5,7 +5,6 @@ different than what is indicated in appveyor.yml.
 
 To invalidate the cache, update this file and check it into git.
 
-
 Currently used modules built in the cache:
 
 OpenSSL
