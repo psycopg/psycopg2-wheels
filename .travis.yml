@@ -14,9 +14,25 @@ addons:
 matrix:
     include:
         - env:
-            PGVER=9.2.24
+            PGVER=7.4.30
         - env:
-            PGVER=9.3.23
+            PGVER=8.0.26
+        - env:
+            PGVER=8.1.23
+        - env:
+            PGVER=8.2.23
+        - env:
+            PGVER=8.3.23
+        - env:
+            PGVER=8.4.22
+        - env:
+            PGVER=9.0.23
+        - env:
+            PGVER=9.1.24
+        # - env:
+        #     PGVER=9.2.24
+        # - env:
+        #     PGVER=9.3.23
 
 
 before_script:
