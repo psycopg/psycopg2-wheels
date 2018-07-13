@@ -1,7 +1,7 @@
 # Travis config file to build psycopg packages
 
 sudo: required
-dist: trusty
+dist: xenial
 language: python
 
 services:
@@ -14,10 +14,9 @@ addons:
 matrix:
     include:
         - env:
-            PGVER=10.0
-            URL=https://ftp.postgresql.org/pub/source/v10.0/postgresql-10.0.tar.gz
-            PACKAGE=10
-            SCRIPT=./scripts/build_dinosaur.sh
+            PGVER=9.2.24
+        - env:
+            PGVER=9.3.23
 
 
 before_script:
@@ -37,7 +36,7 @@ before_script:
     - sudo service postgresql restart
     - psql -c 'create database psycopg2_test' -U postgres
 
-script: $SCRIPT
+script: ./scripts/build_dinosaur.sh
 
 after_success:
     - rsync -avr -e "ssh -i /tmp/id_rsa-initd-upload

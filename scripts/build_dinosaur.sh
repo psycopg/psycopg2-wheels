@@ -46,4 +46,4 @@ fi
 # Use this directory to allow uploading it away
 DISTDIR="${TRAVIS_BUILD_DIR}/psycopg2/dist/postgresql"
 mkdir -p "$DISTDIR"
-tar cjf "${DISTDIR}/postgresql-${PACKAGE}.tar.bz2" -C /usr/lib/postgresql "${PACKAGE}"
+tar cjf "${DISTDIR}/postgresql-${PACKAGE}-$(lsb_release -cs).tar.bz2" -C /usr/lib/postgresql "${PACKAGE}"
