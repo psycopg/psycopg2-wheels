@@ -16,7 +16,7 @@ set -x
 #   installer: The install failed (The Installer could not install the software
 #   because there was no software found to install.)
 
-PYVERSIONS="2.7.15 3.4.8 3.5.5 3.6.6 3.7.0"
+PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0"
 
 brew update > /dev/null
 brew install gnu-sed
