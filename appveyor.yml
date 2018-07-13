@@ -28,6 +28,8 @@ environment:
       - {PYVER: "35", PYTHON_ARCH: "64"}
       - {PYVER: "36", PYTHON_ARCH: "32"}
       - {PYVER: "36", PYTHON_ARCH: "64"}
+      - {PYVER: "37", PYTHON_ARCH: "32"}
+      - {PYVER: "37", PYTHON_ARCH: "64"}
 
 
     WANT_LIBPQ: 100004
@@ -76,6 +78,7 @@ init:
     - IF "%PYVER%"=="34" SET VS_VER=10.0
     - IF "%PYVER%"=="35" SET VS_VER=14.0
     - IF "%PYVER%"=="36" SET VS_VER=14.0
+    - IF "%PYVER%"=="37" SET VS_VER=14.0
 
     - IF "%VS_VER%"=="10.0" IF "%PYTHON_ARCH%"=="64" SET DISTUTILS_USE_SDK=1
 
