@@ -24,6 +24,7 @@ brew install gnu-sed
 brew uninstall postgresql postgis
 brew tap petere/postgresql
 brew install postgresql@10
+pip install virtualenv
 
 export PATH=/usr/local/opt/postgresql@10/bin:$PATH
 
