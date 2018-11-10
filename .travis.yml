@@ -33,10 +33,14 @@ matrix:
             PACKAGE_NAME="psycopg2-binary"
         - os:
             osx
+          osx_image:
+            xcode9.2
           env:
             SCRIPT=./scripts/build_osx.sh
         - os:
             osx
+          osx_image:
+            xcode9.2
           env:
             SCRIPT=./scripts/build_osx.sh
             PACKAGE_NAME="psycopg2-binary"
