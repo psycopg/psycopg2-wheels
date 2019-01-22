@@ -21,12 +21,7 @@ PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0"
 brew update > /dev/null
 brew install gnu-sed
 
-brew uninstall postgresql postgis
-brew tap petere/postgresql
-brew install postgresql@10
 pip install virtualenv
-
-export PATH=/usr/local/opt/postgresql@10/bin:$PATH
 
 # Find psycopg version
 VERSION=$(grep -e ^PSYCOPG_VERSION psycopg2/setup.py | gsed "s/.*'\(.*\)'/\1/")
@@ -160,6 +155,12 @@ for i in $PYVERSIONS; do
     build_wheels $i
 done
 
+# kill the libpq to make sure tests don't depend on it
+mv "$LIBPQ" "${LIBPQ}-bye"
+
 for i in $PYVERSIONS; do
     test_wheels $i
 done
+
+# just because I'm a boy scout
+mv "${LIBPQ}-bye" "$LIBPQ"
