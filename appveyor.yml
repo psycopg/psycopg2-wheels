@@ -20,8 +20,6 @@ environment:
         # http://www.appveyor.com/docs/installed-software#python
       - {PYVER: "27", PYTHON_ARCH: "32"}
       - {PYVER: "27", PYTHON_ARCH: "64"}
-      - {PYVER: "33", PYTHON_ARCH: "32"}
-      - {PYVER: "33", PYTHON_ARCH: "64"}
       - {PYVER: "34", PYTHON_ARCH: "32"}
       - {PYVER: "34", PYTHON_ARCH: "64"}
       - {PYVER: "35", PYTHON_ARCH: "32"}

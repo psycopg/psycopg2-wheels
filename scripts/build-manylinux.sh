@@ -7,6 +7,9 @@
 # docker run --rm -v `pwd`:/build quay.io/pypa/manylinux1_x86_64 /build/scripts/build-manylinux.sh
 # docker run --rm -v `pwd`:/build quay.io/pypa/manylinux1_i686 linux32 /build/scripts/build-manylinux.sh
 #
+# The env variable PACKAGE_NAME must be defined as we don't build wheel
+# packages for psycopg2 anymore.
+#
 # Tests run against a postgres on the host. Use -e PSYCOPG_TESTDB_USER=... etc
 # to configure tests run.
 
@@ -24,35 +27,18 @@ ${DIR}/build_libpq.sh > /dev/null
 
 # Find psycopg version
 export VERSION=$(grep -e ^PSYCOPG_VERSION /build/psycopg2/setup.py | sed "s/.*'\(.*\)'/\1/")
+# A gratuitous comment to fix broken vim syntax file: '")
 export DISTDIR="/build/psycopg2/dist/psycopg2-$VERSION"
 
 # Replace the package name
-if [[ "${PACKAGE_NAME:-}" ]]; then
-    sed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
-        /build/psycopg2/setup.py
-fi
-
-# Insert a warning to deprecate the wheel version of the base package
-if [[ -z "${PACKAGE_NAME:-}" ]]; then
-    grep -q warnings /build/psycopg2/lib/__init__.py ||
-        cat >> /build/psycopg2/lib/__init__.py << 'EOF'
-
-
-# This is a wheel package: issue a warning on import
-from warnings import warn   # noqa
-warn("""\
-The psycopg2 wheel package will be renamed from release 2.8; in order to \
-keep installing from binary please use "pip install psycopg2-binary" instead. \
-For details see: \
-<http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.\
-""")
-EOF
-fi
+sed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
+    /build/psycopg2/setup.py
 
 # Create the wheel packages
 for PYBIN in /opt/python/*/bin; do
+    # Skip unsupported python versions. Keep consistent with testing below.
     if $(${PYBIN}/python --version 2>&1  | grep -qE '2\.6|3\.2|3\.3'); then
-        "${PYBIN}/pip" install "wheel<0.30"
+        continue
     fi
     "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/psycopg2/wheels/
 done
@@ -74,7 +60,10 @@ export PSYCOPG2_TESTDB_HOST=$(ip route show | awk '/default/ {print $3}')
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install ${PACKAGE_NAME:-psycopg2} --no-index -f "$DISTDIR"
+    if $(${PYBIN}/python --version 2>&1  | grep -qE '2\.6|3\.2|3\.3'); then
+        continue
+    fi
+    "${PYBIN}/pip" install ${PACKAGE_NAME} --no-index -f "$DISTDIR"
 
     # Print psycopg and libpq versions
     "${PYBIN}/python" -c "import psycopg2; print(psycopg2.__version__)"

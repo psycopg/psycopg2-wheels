@@ -8,14 +8,6 @@
 set -euo pipefail
 set -x
 
-# 2.6.6 not available for 10.6
-# 3.2.5 3.3.5 fail with:
-
-#   Package /Volumes/Python/Python.mpkg/Contents/Packages/PythonFramework-3.2.pkg
-#   uses a deprecated pre-10.2 format (or uses a newer format but is invalid).
-#   installer: The install failed (The Installer could not install the software
-#   because there was no software found to install.)
-
 PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0"
 
 brew update > /dev/null
@@ -34,6 +26,7 @@ build_wheels () {
     # Python version number in different formats
     PYVER2=${PYVER3:0:3}
     VERNUM=$(( $(echo $PYVER2 | gsed 's/\(.\+\)\.\(.\+\)/100 * \1 + \2/') ))
+    # A gratuitous comment to fix broken vim syntax file: '") {
 
     # Install the selected Python version
     if (( "$VERNUM" >= 300 )); then
@@ -73,27 +66,8 @@ build_wheels () {
     pip install -U wheel delocate
 
     # Replace the package name
-    if [[ "${PACKAGE_NAME:-}" ]]; then
-        gsed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
-            ./psycopg2/setup.py
-    fi
-
-    # Insert a warning to deprecate the wheel version of the base package
-    if [[ -z "${PACKAGE_NAME:-}" ]]; then
-        grep -q warnings ./psycopg2/lib/__init__.py ||
-            cat >> ./psycopg2/lib/__init__.py << 'EOF'
-
-
-# This is a wheel package: issue a warning on import
-from warnings import warn   # noqa
-warn("""\
-The psycopg2 wheel package will be renamed from release 2.8; in order to \
-keep installing from binary please use "pip install psycopg2-binary" instead. \
-For details see: \
-<http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.\
-""")
-EOF
-    fi
+    gsed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
+        ./psycopg2/setup.py
 
     # Build the wheels
     WHEELDIR="${ENVDIR}/wheels"
@@ -131,7 +105,7 @@ test_wheels () {
     # Install and test the built wheel
     export PSYCOPG2_TESTDB_USER=postgres
     export PSYCOPG2_TESTDB_FAST=1
-    pip install ${PACKAGE_NAME:-psycopg2} --no-index -f "$DISTDIR"
+    pip install ${PACKAGE_NAME} --no-index -f "$DISTDIR"
 
     # Print psycopg and libpq versions
     python -c "import psycopg2; print(psycopg2.__version__)"
