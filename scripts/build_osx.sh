@@ -17,6 +17,7 @@ pip install virtualenv
 
 # Find psycopg version
 VERSION=$(grep -e ^PSYCOPG_VERSION psycopg2/setup.py | gsed "s/.*'\(.*\)'/\1/")
+# A gratuitous comment to fix broken vim syntax file: '")
 DISTDIR="psycopg2/dist/psycopg2-$VERSION"
 mkdir -p "$DISTDIR"
 
@@ -26,7 +27,6 @@ build_wheels () {
     # Python version number in different formats
     PYVER2=${PYVER3:0:3}
     VERNUM=$(( $(echo $PYVER2 | gsed 's/\(.\+\)\.\(.\+\)/100 * \1 + \2/') ))
-    # A gratuitous comment to fix broken vim syntax file: '") {
 
     # Install the selected Python version
     if (( "$VERNUM" >= 300 )); then
@@ -118,7 +118,9 @@ test_wheels () {
     #     python -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     # fi
 
-    python -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
+    cd ./psycopg2
+    python -c "import tests; tests.unittest.main(defaultTest='tests.test_suite')"
+    cd ..
 
     # Reset python to whatever
     deactivate

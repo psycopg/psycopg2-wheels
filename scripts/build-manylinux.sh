@@ -59,6 +59,7 @@ rm /usr/local/lib/libpq.*
 export PSYCOPG2_TESTDB_HOST=$(ip route show | awk '/default/ {print $3}')
 
 # Install packages and test
+cd "/build/psycopg2/"
 for PYBIN in /opt/python/*/bin; do
     if $(${PYBIN}/python --version 2>&1  | grep -qE '2\.6|3\.2|3\.3'); then
         continue
@@ -75,5 +76,5 @@ for PYBIN in /opt/python/*/bin; do
         "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     fi
 
-    "${PYBIN}/python" -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
+    "${PYBIN}/python" -c "import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 done

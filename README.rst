@@ -100,4 +100,4 @@ You can test what just uploaded with::
     python -c "import psycopg2; print(psycopg2.__version__)"
     # 2.7b1 (dt dec pq3 ext lo64)
 
-    python -c "from psycopg2 import tests; tests.unittest.main(defaultTest='tests.test_suite')"
+    python -c "import tests; tests.unittest.main(defaultTest='tests.test_suite')"
