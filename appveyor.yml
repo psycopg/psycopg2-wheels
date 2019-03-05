@@ -30,9 +30,9 @@ environment:
       - {PYVER: "37", PYTHON_ARCH: "64"}
 
 
-    WANT_LIBPQ: 110001
-    OPENSSL_VERSION: "1_0_2q"
-    POSTGRES_VERSION: "11_1"
+    OPENSSL_VERSION: "1_0_2r"
+    POSTGRES_VERSION: "11_2"
+    WANT_LIBPQ: 110002
 
     PSYCOPG2_TESTDB: psycopg2_test
     PSYCOPG2_TESTDB_USER: postgres
