@@ -16,17 +16,6 @@ env:
 
 matrix:
     include:
-        - env:
-            SCRIPT=./scripts/build_sdist.sh
-        - env:
-            SCRIPT=./scripts/build_sdist.sh
-            PACKAGE_NAME="psycopg2-binary"
-        - env:
-            SCRIPT=./scripts/build_manylinux1_i686.sh
-            PACKAGE_NAME="psycopg2-binary"
-        - env:
-            SCRIPT=./scripts/build_manylinux1_x86_64.sh
-            PACKAGE_NAME="psycopg2-binary"
         - os:
             osx
           osx_image:
@@ -44,8 +33,6 @@ before_script:
     - sudo ./scripts/configure_postgres.sh
 
 script: $SCRIPT
-
-after_success: ./scripts/upload_packages.sh
 
 notifications:
   email: false
