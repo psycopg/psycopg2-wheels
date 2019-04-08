@@ -27,7 +27,7 @@ if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
     # Expose the lib version number in the .so file name
     sed -i "s/SHLIB_VERSION_NUMBER\s\+\".*\""\
 "/SHLIB_VERSION_NUMBER \"${OPENSSL_VERSION}\"/" \
-        ./crypto/opensslv.h
+        ./include/openssl/opensslv.h
     sed -i "s|if (\$shlib_version_number =~ /(^\[0-9\]\*)\\\.(\[0-9\\\.\]\*)/)"\
 "|if (\$shlib_version_number =~ /(^[0-9]*)\.([0-9\.]*[a-z]?)/)|" \
         ./Configure
