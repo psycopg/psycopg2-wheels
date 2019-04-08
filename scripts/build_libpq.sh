@@ -39,7 +39,7 @@ if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
         ./Configure
 
     ./config --prefix=/usr/local/ --openssldir=/usr/local/ \
-        zlib -fPIC shared --with-krb5-flavor=MIT
+        zlib -fPIC shared
     make depend
     make
 
