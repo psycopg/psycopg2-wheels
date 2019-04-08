@@ -18,6 +18,12 @@ yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
 # Build openssl if needed
 if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
+    # Need perl 5.10.0 for build
+    curl -L https://install.perlbrew.pl | bash
+    source ~/perl5/perlbrew/etc/bashrc
+    perlbrew install perl-5.10.0
+    perlbrew switch perl-5.10.0
+
     curl -sL \
         https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
         | tar xzf -
