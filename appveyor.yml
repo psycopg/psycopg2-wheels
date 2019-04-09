@@ -157,13 +157,10 @@ install:
         curl -fsSL -o OpenSSL_%OPENSSL_VERSION%.zip https://github.com/openssl/openssl/archive/OpenSSL_%OPENSSL_VERSION%.zip
       )
 
-    # To use OpenSSL >= 1.1.0, both libpq and psycopg build environments have
-    #   to support the new library names.  Below are commands to build OpenSSL
-    #   1.1.0:
-    #    - mkdir _build
-    #    - cd _build
-    #    - perl ..\Configure %TARGET% no-asm no-shared --prefix=%BASE_DIR%\openssl --openssldir=%BASE_DIR%\openssl
-    #    - nmake build_libs install_dev
+    # OpenSSL >= 1.1.0 has different library names from 1.0.x
+    # 1.0.x name -> 1.1.x name
+    # libeay32 -> libcrypto
+    # ssleay32 -> libssl
     - IF NOT EXIST %OPENSSLTOP%\lib\libssl.lib (
         CD %BUILD_DIR% &&
         7z x C:\Others\OpenSSL_%OPENSSL_VERSION%.zip &&
