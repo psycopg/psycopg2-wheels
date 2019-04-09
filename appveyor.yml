@@ -196,12 +196,15 @@ install:
     # Copy over built libraries
     # Prepare local include directory for building from
     # Build pg_config in place
+    # Note patch for OpenSSL 1.1 configuration. See:
+    # https://www.postgresql-archive.org/Compile-psql-9-6-with-SSL-Version-1-1-0-td6054118.html
     # NOTE: Cannot set and use the same variable inside an IF
     - SET PGBUILD=%BUILD_DIR%\postgres-REL_%POSTGRES_VERSION%
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
         CD %BUILD_DIR% &&
         7z x C:\Others\postgres-REL_%POSTGRES_VERSION%.zip &&
         CD postgres-REL_%POSTGRES_VERSION%\src\tools\msvc &&
+        patch -p1 < ..\win_openssl_11.patch &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
