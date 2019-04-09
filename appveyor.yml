@@ -246,6 +246,9 @@ build_script:
     - git submodule update --init --recursive
 
     - CD C:\Project\psycopg2
+    # Patch for OpenSSL 1.1.1b library names.
+    # See: https://github.com/curl/curl/issues/984
+    - patch -p1 < %APPVEYOR_BUILD_FOLDER%\psycopg2_setup.patch
     - ps: $env:PYVERDIR = (Select-String setup.py -pattern "^PSYCOPG_VERSION = '(.*)'").Matches.Groups[1].Value
     - ps: $env:DISTDIR = "C:\\Project\\psycopg2\\dist\\psycopg2-" + $env:PYVERDIR
 
