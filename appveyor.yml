@@ -204,7 +204,7 @@ install:
         CD %BUILD_DIR% &&
         7z x C:\Others\postgres-REL_%POSTGRES_VERSION%.zip &&
         CD postgres-REL_%POSTGRES_VERSION%\src\tools\msvc &&
-        patch -p1 < ..\win_openssl_11.patch &&
+        patch -p1 < %APPVEYOR_BUILD_FOLDER%\win_openssl_11.patch &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
