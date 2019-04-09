@@ -30,7 +30,7 @@ environment:
       - {PYVER: "37", PYTHON_ARCH: "64"}
 
 
-    OPENSSL_VERSION: "1_0_2r"
+    OPENSSL_VERSION: "1_1_1b"
     POSTGRES_VERSION: "11_2"
     WANT_LIBPQ: 110002
 
