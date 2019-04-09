@@ -76,5 +76,7 @@ for PYBIN in /opt/python/*/bin; do
         "${PYBIN}/python" -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     fi
 
+    # Run Postgres tests via SSH
+    export PGSSLMODE=require
     "${PYBIN}/python" -c "import tests; tests.unittest.main(defaultTest='tests.test_suite')"
 done
