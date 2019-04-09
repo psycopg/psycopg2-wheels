@@ -14,8 +14,6 @@ OPENSSL_TAG="OpenSSL_${OPENSSL_VERSION//./_}"
 LDAP_TAG="${LDAP_VERSION}"
 POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
 
-PGSSLMODE=require
-
 yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
 # Build openssl if needed
