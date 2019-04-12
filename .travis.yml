@@ -36,11 +36,6 @@ matrix:
             PACKAGE_NAME="psycopg2-binary"
 
 before_script:
-    # Set up files required for upload
-    - openssl aes-256-cbc
-      -K $encrypted_bd656d6a5753_key -iv $encrypted_bd656d6a5753_iv
-      -in id_rsa-travis-upload.enc -out /tmp/id_rsa-travis-upload -d
-    - chmod 600 known_hosts /tmp/id_rsa-travis-upload
     - sudo ./scripts/configure_postgres.sh
 
 script: $SCRIPT
