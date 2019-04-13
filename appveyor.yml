@@ -290,6 +290,9 @@ test_script:
     # fail if we are not using the expected libpq library
     - "%PYTHON%\\python.exe -c \"import os, sys, psycopg2; sys.exit(int(os.environ['WANT_LIBPQ']) != psycopg2.extensions.libpq_version())\""
 
+    # Unset the OPENSSL_CONF variable for our tests
+    - ps: Remove-Item Env:\OPENSSL_CONF
+
     - ps: $env:PSYCOPG2_TEST_FAST = "1"
     - "%PYTHON%\\python.exe -c \"import tests; tests.unittest.main(defaultTest='tests.test_suite')\""
 
