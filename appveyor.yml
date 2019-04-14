@@ -210,7 +210,7 @@ install:
     # Copy over built libraries
     # Prepare local include directory for building from
     # Build pg_config in place
-    # Note patch for OpenSSL 1.1 configuration. See:
+    # Note ECHOs for OpenSSL 1.1 configuration (pg_config.h.win32). See: 
     # https://www.postgresql-archive.org/Compile-psql-9-6-with-SSL-Version-1-1-0-td6054118.html
     # NOTE: Cannot set and use the same variable inside an IF
     - SET PGBUILD=%BUILD_DIR%\postgres-REL_%POSTGRES_VERSION%
@@ -218,7 +218,11 @@ install:
         CD %BUILD_DIR% &&
         7z x C:\Others\postgres-REL_%POSTGRES_VERSION%.zip &&
         CD postgres-REL_%POSTGRES_VERSION% &&
-        patch -p1 < %APPVEYOR_BUILD_FOLDER%\win_openssl_11.patch &&
+        ECHO '#define HAVE_ASN1_STRING_GET0_DATA 1' >> src\include\pg_config.h.win32 &&
+        ECHO '#define HAVE_BIO_GET_DATA 1' >> src\include\pg_config.h.win32 &&
+        ECHO '#define HAVE_BIO_METH_NEW 1' >> src\include\pg_config.h.win32 &&
+        ECHO '#define HAVE_OPENSSL_INIT_SSL 1' >> src\include\pg_config.h.win32 &&
+        perl -pi.bak -e "s/'//g" src\include\pg_config.h.win32 &&
         CD src\tools\msvc &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
