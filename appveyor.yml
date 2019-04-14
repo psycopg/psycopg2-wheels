@@ -30,7 +30,7 @@ environment:
       - {PYVER: "37", PYTHON_ARCH: "64"}
 
 
-    OPENSSL_VERSION: "1_0_2r"
+    OPENSSL_VERSION: "1_1_1b"
     POSTGRES_VERSION: "11_2"
     WANT_LIBPQ: 110002
 
@@ -42,6 +42,7 @@ environment:
 
     PGUSER: postgres
     PGPASSWORD: Password12!
+    PGSSLMODE: require
 
     REMOTE_KEY:
         secure: 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
@@ -114,10 +115,26 @@ init:
     #   files to that location.
     - IF "%PYTHON_ARCH%"=="64" (COPY /Y "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Bin\\x64\\rc*" "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Bin")
 
+    # Define the PostgreSQL DATA directory location
+    - SET POSTGRESQL_DATA_DIR=C:\Program Files\PostgreSQL\9.6\data
+    # Define the Appveyor installed OpenSSL Binary Path
+    - SET INSTALLED_OPENSSL=C:\OpenSSL-v111-Win64\bin
+
     # Change PostgreSQL config before service starts to allow > 1 prepared
     #   transactions for test cases
-    - ECHO max_prepared_transactions = 10 >> "C:\\Program Files\\PostgreSQL\\9.6\\data\\postgresql.conf"
+    - ECHO max_prepared_transactions = 10 >> "%POSTGRESQL_DATA_DIR%\\postgresql.conf"
 
+    # Have the local PostgreSQL server only allow SSL connections
+    - ECHO ssl = on >> "%POSTGRESQL_DATA_DIR%\\postgresql.conf"
+    - CD %POSTGRESQL_DATA_DIR%
+    - "%INSTALLED_OPENSSL%\\openssl req -new -x509 -days 365 -nodes -text -out server.crt -keyout server.key -subj \"/CN=initd.org\""
+    - "%INSTALLED_OPENSSL%\\openssl req -new -nodes -text -out root.csr -keyout root.key -subj \"/CN=initd.org\""
+    - "%INSTALLED_OPENSSL%\\openssl x509 -req -in root.csr -text -days 3650 -extensions v3_ca -signkey root.key -out root.crt"
+    - "%INSTALLED_OPENSSL%\\openssl req -new -nodes -text -out server.csr -keyout server.key -subj \"/CN=initd.org\""
+    - "%INSTALLED_OPENSSL%\\openssl x509 -req -in server.csr -text -days 365 -CA root.crt -CAkey root.key -CAcreateserial -out server.crt"
+
+    # Return to the build folder so that the git cloning functions correctly
+    - CD %APPVEYOR_BUILD_FOLDER%
 
 # Repository gets cloned, Cache is restored
 install:
@@ -146,11 +163,9 @@ install:
         If ($env:PYTHON_ARCH -Match "32" ) {
             $env:VCVARS_PLATFORM="x86"
             $env:TARGET="VC-WIN32"
-            $env:DO="do_ms"
         } Else {
             $env:VCVARS_PLATFORM="amd64"
             $env:TARGET="VC-WIN64A"
-            $env:DO="do_win64a"
             $env:CPU="AMD64"
         }
     # Download OpenSSL source
@@ -159,22 +174,16 @@ install:
         curl -fsSL -o OpenSSL_%OPENSSL_VERSION%.zip https://github.com/openssl/openssl/archive/OpenSSL_%OPENSSL_VERSION%.zip
       )
 
-    # To use OpenSSL >= 1.1.0, both libpq and psycopg build environments have
-    #   to support the new library names.  Below are commands to build OpenSSL
-    #   1.1.0:
-    #    - mkdir _build
-    #    - cd _build
-    #    - perl ..\Configure %TARGET% no-asm no-shared --prefix=%BASE_DIR%\openssl --openssldir=%BASE_DIR%\openssl
-    #    - nmake build_libs install_dev
-    - IF NOT EXIST %OPENSSLTOP%\lib\ssleay32.lib (
+    # OpenSSL >= 1.1.0 has different library names from 1.0.x
+    # 1.0.x name -> 1.1.x name
+    # libeay32 -> libcrypto
+    # ssleay32 -> libssl
+    - IF NOT EXIST %OPENSSLTOP%\lib\libssl.lib (
         CD %BUILD_DIR% &&
         7z x C:\Others\OpenSSL_%OPENSSL_VERSION%.zip &&
         CD openssl-OpenSSL_%OPENSSL_VERSION% &&
         perl Configure %TARGET% no-asm no-shared no-zlib --prefix=%OPENSSLTOP% --openssldir=%OPENSSLTOP% &&
-        CALL ms\%DO% &&
-        nmake -f ms\nt.mak init headers lib &&
-        COPY inc32\openssl\*.h %OPENSSLTOP%\include\openssl &&
-        COPY out32\*.lib %OPENSSLTOP%\lib &&
+        nmake build_libs install_dev &&
         CD %BASE_DIR% &&
         RMDIR /S /Q %BUILD_DIR%\openssl-OpenSSL_%OPENSSL_VERSION%
       )
@@ -201,12 +210,20 @@ install:
     # Copy over built libraries
     # Prepare local include directory for building from
     # Build pg_config in place
+    # Note ECHOs for OpenSSL 1.1 configuration (pg_config.h.win32). See: 
+    # https://www.postgresql-archive.org/Compile-psql-9-6-with-SSL-Version-1-1-0-td6054118.html
     # NOTE: Cannot set and use the same variable inside an IF
     - SET PGBUILD=%BUILD_DIR%\postgres-REL_%POSTGRES_VERSION%
     - IF NOT EXIST %PGTOP%\lib\libpq.lib (
         CD %BUILD_DIR% &&
         7z x C:\Others\postgres-REL_%POSTGRES_VERSION%.zip &&
-        CD postgres-REL_%POSTGRES_VERSION%\src\tools\msvc &&
+        CD postgres-REL_%POSTGRES_VERSION% &&
+        ECHO '#define HAVE_ASN1_STRING_GET0_DATA 1' >> src\include\pg_config.h.win32 &&
+        ECHO '#define HAVE_BIO_GET_DATA 1' >> src\include\pg_config.h.win32 &&
+        ECHO '#define HAVE_BIO_METH_NEW 1' >> src\include\pg_config.h.win32 &&
+        ECHO '#define HAVE_OPENSSL_INIT_SSL 1' >> src\include\pg_config.h.win32 &&
+        perl -pi.bak -e "s/'//g" src\include\pg_config.h.win32 &&
+        CD src\tools\msvc &&
         ECHO $config-^>{ldap} = 0; > config.pl &&
         ECHO $config-^>{openssl} = "%OPENSSLTOP:\=\\%"; >> config.pl &&
         ECHO.>> config.pl &&
@@ -276,6 +293,9 @@ test_script:
 
     # fail if we are not using the expected libpq library
     - "%PYTHON%\\python.exe -c \"import os, sys, psycopg2; sys.exit(int(os.environ['WANT_LIBPQ']) != psycopg2.extensions.libpq_version())\""
+
+    # Unset the OPENSSL_CONF variable for our tests
+    - ps: Remove-Item Env:\OPENSSL_CONF
 
     - ps: $env:PSYCOPG2_TEST_FAST = "1"
     - "%PYTHON%\\python.exe -c \"import tests; tests.unittest.main(defaultTest='tests.test_suite')\""

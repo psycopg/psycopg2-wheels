@@ -5,8 +5,8 @@
 set -e -x
 set -o pipefail
 
-OPENSSL_VERSION="1.0.2r"
-LDAP_VERSION="2.4.44"
+OPENSSL_VERSION="1.1.1b"
+LDAP_VERSION="2.4.47"
 # If you change this, fix WANT_LIBPQ too in .travis.yml
 POSTGRES_VERSION="11.2"
 
@@ -18,6 +18,12 @@ yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
 
 # Build openssl if needed
 if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
+    # Need perl 5.10.0 for build
+    curl -L https://install.perlbrew.pl | bash
+    source ~/perl5/perlbrew/etc/bashrc
+    perlbrew install --notest perl-5.16.0
+    perlbrew switch perl-5.16.0
+
     curl -sL \
         https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
         | tar xzf -
@@ -27,13 +33,13 @@ if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
     # Expose the lib version number in the .so file name
     sed -i "s/SHLIB_VERSION_NUMBER\s\+\".*\""\
 "/SHLIB_VERSION_NUMBER \"${OPENSSL_VERSION}\"/" \
-        ./crypto/opensslv.h
+        ./include/openssl/opensslv.h
     sed -i "s|if (\$shlib_version_number =~ /(^\[0-9\]\*)\\\.(\[0-9\\\.\]\*)/)"\
 "|if (\$shlib_version_number =~ /(^[0-9]*)\.([0-9\.]*[a-z]?)/)|" \
         ./Configure
 
     ./config --prefix=/usr/local/ --openssldir=/usr/local/ \
-        zlib -fPIC shared --with-krb5-flavor=MIT
+        zlib -fPIC shared
     make depend
     make
 
