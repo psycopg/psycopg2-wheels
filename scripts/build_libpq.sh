@@ -83,6 +83,8 @@ chmod +x /usr/local/lib/{libldap,liblber}*.so*
 cd ..
 
 # Build libpq if needed
+# This recipe is very similar to that in build_libpq_macos.sh
+# Consider keeping them in sync.
 if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
     curl -sL \
         https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
