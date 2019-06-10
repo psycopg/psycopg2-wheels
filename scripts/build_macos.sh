@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Create OSX wheels for psycopg2
+# Create macOS wheels for psycopg2
 #
 # Following instructions from https://github.com/MacPython/wiki/wiki/Spinning-wheels
 # Cargoculting pieces of implementation from https://github.com/matthew-brett/multibuild
@@ -12,6 +12,13 @@ PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0"
 
 brew update > /dev/null
 brew install gnu-sed
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Create prerequisite libraries
+libdir="$DIR/../libs/"
+mkdir -p "$libdir"
+(cd "$libdir" && bash ${DIR}/build_libpq_macos.sh > /dev/null)
 
 pip install virtualenv
 
@@ -113,7 +120,7 @@ test_wheels () {
     python -c "import psycopg2; print(psycopg2.extensions.libpq_version())"
 
     # fail if we are not using the expected libpq library
-    # Disabled as we just use what's available on the system on OSX
+    # Disabled as we just use what's available on the system on macOS
     # if [[ "${WANT_LIBPQ:-}" ]]; then
     #     python -c "import psycopg2, sys; sys.exit(${WANT_LIBPQ} != psycopg2.extensions.libpq_version())"
     # fi

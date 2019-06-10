@@ -32,7 +32,7 @@ matrix:
           osx_image:
             xcode9.2
           env:
-            SCRIPT=./scripts/build_osx.sh
+            SCRIPT=./scripts/build_macos.sh
             PACKAGE_NAME="psycopg2-binary"
 
 before_script:
