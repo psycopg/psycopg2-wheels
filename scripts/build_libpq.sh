@@ -7,28 +7,26 @@ set -o pipefail
 
 OPENSSL_VERSION="1.1.1d"
 LDAP_VERSION="2.4.48"
+SASL_VERSION="2.1.27"
 # If you change this, fix WANT_LIBPQ too in .travis.yml
 POSTGRES_VERSION="11.5"
 
-OPENSSL_TAG="OpenSSL_${OPENSSL_VERSION//./_}"
-LDAP_TAG="${LDAP_VERSION}"
-POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
+yum install -y zlib-devel krb5-devel pam-devel
 
-yum install -y zlib-devel krb5-devel pam-devel cyrus-sasl-devel
+# Need perl 5.10.0 to build/install openssl
+curl -L https://install.perlbrew.pl | bash
+source ~/perl5/perlbrew/etc/bashrc
+perlbrew install --notest perl-5.16.0
+perlbrew switch perl-5.16.0
 
 # Build openssl if needed
-if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
-    # Need perl 5.10.0 for build
-    curl -L https://install.perlbrew.pl | bash
-    source ~/perl5/perlbrew/etc/bashrc
-    perlbrew install --notest perl-5.16.0
-    perlbrew switch perl-5.16.0
-
-    curl -sL \
+OPENSSL_TAG="OpenSSL_${OPENSSL_VERSION//./_}"
+OPENSSL_DIR="openssl-${OPENSSL_TAG}"
+if [ ! -d "${OPENSSL_DIR}" ]; then curl -sL \
         https://github.com/openssl/openssl/archive/${OPENSSL_TAG}.tar.gz \
         | tar xzf -
 
-    cd "openssl-${OPENSSL_TAG}/"
+    cd "${OPENSSL_DIR}"
 
     # Expose the lib version number in the .so file name
     sed -i "s/SHLIB_VERSION_NUMBER\s\+\".*\""\
@@ -49,20 +47,50 @@ if [ ! -d "openssl-${OPENSSL_TAG}/" ]; then
         exit 1
     fi
 else
-    cd "openssl-${OPENSSL_TAG}/"
+    cd "{OPENSSL_DIR}"
 fi
 
 # Install openssl
 make install
 cd ..
 
+
+# Build libsasl2 if needed
+# The system package (cyrus-sasl-devel) causes an amazing error on i686:
+# "unsupported version 0 of Verneed record"
+# https://github.com/pypa/manylinux/issues/376
+SASL_TAG="cyrus-sasl-${SASL_VERSION}"
+SASL_DIR="cyrus-sasl-${SASL_TAG}"
+if [ ! -d "${SASL_DIR}" ]; then
+    curl -sL \
+        https://github.com/cyrusimap/cyrus-sasl/archive/${SASL_TAG}.tar.gz \
+        | tar xzf -
+
+    cd "${SASL_DIR}"
+
+    autoreconf -i
+    ./configure
+    make
+else
+    cd "${SASL_DIR}"
+fi
+
+# Install libsasl2
+# requires missing nroff to build
+touch saslauthd/saslauthd.8
+make install
+cd ..
+
+
 # Build openldap if needed
-if [ ! -d "openldap-${LDAP_TAG}/" ]; then
+LDAP_TAG="${LDAP_VERSION}"
+LDAP_DIR="openldap-${LDAP_TAG}"
+if [ ! -d "${LDAP_DIR}" ]; then
     curl -sL \
         https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${LDAP_TAG}.tgz \
         | tar xzf -
 
-    cd "openldap-${LDAP_TAG}/"
+    cd "${LDAP_DIR}"
 
     ./configure --enable-backends=no --enable-null
     make depend
@@ -71,7 +99,7 @@ if [ ! -d "openldap-${LDAP_TAG}/" ]; then
     (cd libraries/libldap/ && make)
     (cd libraries/libldap_r/ && make)
 else
-    cd "openldap-${LDAP_TAG}/"
+    cd "${LDAP_DIR}"
 fi
 
 # Install openldap
@@ -82,15 +110,18 @@ fi
 chmod +x /usr/local/lib/{libldap,liblber}*.so*
 cd ..
 
+
 # Build libpq if needed
 # This recipe is very similar to that in build_libpq_macos.sh
 # Consider keeping them in sync.
-if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
+POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
+POSTGRES_DIR="postgres-${POSTGRES_TAG}"
+if [ ! -d "${POSTGRES_DIR}" ]; then
     curl -sL \
         https://github.com/postgres/postgres/archive/${POSTGRES_TAG}.tar.gz \
         | tar xzf -
 
-    cd "postgres-${POSTGRES_TAG}/"
+    cd "${POSTGRES_DIR}"
 
     # Match the default unix socket dir default with what defined on Ubuntu and
     # Red Hat, which seems the most common location
@@ -105,13 +136,13 @@ if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
     # This will fail after installing postgres_fe.h, which is what we need
     (cd src/include && make)
 else
-    cd "postgres-${POSTGRES_TAG}/"
+    cd "${POSTGRES_DIR}"
 fi
 
 # Install libpq
 (cd src/interfaces/libpq && make install)
 (cd src/bin/pg_config && make install)
-# This will fail after installing postgres_fe.h, which is what we need
+# This will fail after installing postgres_fe.h, which is the bit we need
 (cd src/include && make install || true)
 cd ..
 
