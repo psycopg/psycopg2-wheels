@@ -1,6 +1,6 @@
 # Build libpq on macOS
 # If you change this, fix WANT_LIBPQ too in .travis.yml
-POSTGRES_VERSION="11.2"
+POSTGRES_VERSION="11.5"
 
 POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
 
