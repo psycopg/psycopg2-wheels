@@ -8,7 +8,7 @@
 set -euo pipefail
 set -x
 
-PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0 3.8.0"
+PYVERSIONS="2.7.15 3.5.4 3.6.6 3.7.0 3.8.0"
 
 brew update > /dev/null
 brew install gnu-sed
