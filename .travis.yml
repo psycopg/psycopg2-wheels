@@ -12,6 +12,7 @@ addons:
 
 env:
     global:
+        # must match the value in build_libpq.sh and build_libpq_macos.sh
         - WANT_LIBPQ="110005"
 
 matrix:
