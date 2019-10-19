@@ -44,7 +44,7 @@ for PYBIN in /opt/python/*/bin; do
 done
 
 # Make sure auditwheel will not include libresolv
-POLICY=/opt/_internal/cpython-3.6.*/lib/python3.6/site-packages/auditwheel/policy/policy.json
+POLICY=/opt/_internal/cpython-3.*/lib/python3.*/site-packages/auditwheel/policy/policy.json
 grep -q libresolv $POLICY
 
 # Bundle external shared libraries into the wheels
