@@ -8,7 +8,7 @@
 set -euo pipefail
 set -x
 
-PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0"
+PYVERSIONS="2.7.15 3.4.4 3.5.4 3.6.6 3.7.0 3.8.0"
 
 brew update > /dev/null
 brew install gnu-sed
@@ -45,7 +45,13 @@ build_wheels () {
         PKGEXT=$(if (( "$VERNUM" >= 207 )); then echo "pkg"; else echo "dmg"; fi)
     fi
 
-    PYINST="python-${PYVER3}-macosx10.6.${PKGEXT}"
+    if (( "$VERNUM" >= 308 )); then
+        OSXVER=10.9
+    else
+        OSXVER=10.6
+    fi
+
+    PYINST="python-${PYVER3}-macosx${OSXVER}.${PKGEXT}"
     wget --quiet "https://www.python.org/ftp/python/${PYVER3}/$PYINST"
 
     if [ "$PKGEXT" == "dmg" ]; then
