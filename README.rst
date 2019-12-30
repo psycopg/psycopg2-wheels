@@ -19,7 +19,7 @@ This project is used to create binary packages of psycopg2_. It creates:
 - OSX wheel packages
 - Windows wheel and exe packages
 
-.. _psycopg2: http://initd.org/psycopg/
+.. _psycopg2: http://psycopg.org/
 .. _manylinux: https://github.com/pypa/manylinux
 
 
@@ -36,12 +36,11 @@ tag and push::
     git commit -m "Building packages for psycopg2 2.7 beta 1"
     git push
 
-The packages are built on `Travis CI`__ and `AppVeyor CI`__, and uploaded__ on
-the initd.org server.
+The packages are built on `Travis CI`__ and `AppVeyor CI`__, and uploaded on
+http://upload.psycopg.org/
 
 .. __: https://travis-ci.org/psycopg/psycopg2-wheels
 .. __: https://ci.appveyor.com/project/psycopg/psycopg2-wheels
-.. __: http://initd.org/psycopg/upload/
 
 
 Uploading to PyPI
@@ -82,7 +81,7 @@ You must have your ``~/.pypirc`` file configured__, e.g. ::
 
 Then you can download, sign, and release the packages::
 
-    rsync -arv initd.org:/home/upload/upload/psycopg2-2.7b1 .
+    rsync -arv psycopg-upload:psycopg2-2.7b1 .
 
     # For a test release
     twine upload -s -r testpypi psycopg2-2.7b1/*
