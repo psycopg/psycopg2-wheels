@@ -19,7 +19,7 @@ This project is used to create binary packages of psycopg2_. It creates:
 - OSX wheel packages
 - Windows wheel and exe packages
 
-.. _psycopg2: http://psycopg.org/
+.. _psycopg2: https://psycopg.org/
 .. _manylinux: https://github.com/pypa/manylinux
 
 
