@@ -1,0 +1,7 @@
+Host upload
+    User psycopg
+    HostName upload.psycopg.org
+    IdentityFile data/id_rsa-psycopg-upload
+    UserKnownHostsFile data/known_hosts
+    # Fail immediately instead of prompting and hanging forever
+    StrictHostKeyChecking yes

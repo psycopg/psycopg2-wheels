@@ -1,0 +1,6 @@
+# Generated with:
+# ssh upload.psycopg.org ssh-keyscan -t rsa upload.psycopg.org
+# ssh upload.psycopg.org ssh-keyscan -t ecdsa upload.psycopg.org
+
+upload.psycopg.org ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/ECax8/6D80iEDhI+P3Rjqyh8BKNHtxO0ZhDbySYpGp9M3kv5ZCM5DXaMLFn0MQn1FSLdQDa+IPoFTPqiOpyFt0EU14TJhR9YJQEZDxoK2IZd4eFjGLTVAZReWK/dz6ixEF9KMzIVMeVqZYa9ABsGVgR3Loc/ks1COubYx0aYFzQYNhxEC5xaL4viTi1SqkUMRpn7ggfnec6pQAZTQal6+I34Hm58HD/9bpq3A8aHI670NlJdU2k8bysy0yENlC270L99qYWXTn3i3KNTJaQWDdBkEI8Q6p8ScUWkH+gpkrkzyn7H+kGoAUVr5qty+ta/m0KkADYCa/38y8gwYrXV
+upload.psycopg.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBARbPWVbF8WfsNWNpDXWE/MeuZ/bOMab8sneIUlRO+bUsBJNr4vvlpim0gU8Cm4xvk3g7F5TnTcNWBDfDT1/pz8=

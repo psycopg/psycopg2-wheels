@@ -21,7 +21,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     service postgresql restart
 
 else
-    DATADIR="`pwd`/data"
+    DATADIR="`pwd`/dbdata"
     sudo -u travis initdb -D "$DATADIR"
     sudo -u travis pg_ctl -w -D "$DATADIR" -l /dev/null start
     sudo -u travis psql -c 'create user postgres superuser' postgres
