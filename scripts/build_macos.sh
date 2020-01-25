@@ -27,18 +27,15 @@ libdir="$DIR/../libs/"
 mkdir -p "$libdir"
 (cd "$libdir" && bash ${DIR}/build_libpq_macos.sh > /dev/null)
 
-# Update pip without needing pip or you will hit problems
-# because pip 9.0.1 is ancient and TLSV1_ALERT_PROTOCOL_VERSION.
-wget -O - https://bootstrap.pypa.io/get-pip.py | sudo python
-pip install virtualenv
-
 # Find psycopg version
 VERSION=$(grep -e ^PSYCOPG_VERSION psycopg2/setup.py | gsed "s/.*'\(.*\)'/\1/")
 # A gratuitous comment to fix broken vim syntax file: '")
 DISTDIR="psycopg2/dist/psycopg2-$VERSION"
 mkdir -p "$DISTDIR"
 
-build_wheels () {
+PYPREFIX=/Library/Frameworks/Python.framework/Versions
+
+setup_python () {
     PYVER3=$1
 
     # Python version number in different formats
@@ -75,18 +72,32 @@ build_wheels () {
     fi
 
     # Work with the selected python
-    PYPREFIX=/Library/Frameworks/Python.framework/Versions
-    PYEXE=${PYPREFIX}/${PYVER2}/bin/python${PYVER2}
+    BINDIR=${PYPREFIX}/${PYVER2}/bin
+    PYEXE=${BINDIR}/python${PYVER2}
     ENVDIR="env-${PYVER2}"
-    virtualenv -p "$PYEXE" "$ENVDIR"
-    set +u
-    source "${ENVDIR}/bin/activate"
-    set -u
 
     # Install pip without pip because now pip has a problem pipping pip
     # https://github.com/geerlingguy/mac-dev-playbook/issues/61
-    wget --quiet -O - https://bootstrap.pypa.io/get-pip.py | python
-    pip install -U wheel delocate
+    if [ ! -f get-pip.py ]; then
+        wget --quiet https://bootstrap.pypa.io/get-pip.py
+    fi
+    "${PYEXE}" get-pip.py
+    "${BINDIR}/pip" install -U virtualenv
+
+    # Create a virtualenv with this python version
+    "${BINDIR}/virtualenv" "$ENVDIR"
+    "${ENVDIR}/bin/pip" install -U pip wheel delocate
+}
+
+build_wheels () {
+    PYVER3=$1
+
+    # Work with the selected python
+    PYVER2=${PYVER3:0:3}
+    BINDIR=${PYPREFIX}/${PYVER2}/bin
+    ENVDIR="env-${PYVER2}"
+
+    source "${ENVDIR}/bin/activate"
 
     # Replace the package name
     gsed -i "s/^setup(name=\"psycopg2\"/setup(name=\"${PACKAGE_NAME}\"/" \
@@ -108,21 +119,17 @@ build_wheels () {
     cp ${WHEELDIR}/*.whl ${DISTDIR}
 
     # Reset python to whatever
-    set +u
     deactivate
-    set -u
 }
 
 test_wheels () {
     PYVER3=$1
 
-    PYVER2=${PYVER3:0:3}
-
     # Work with the selected python
-    PYPREFIX=/Library/Frameworks/Python.framework/Versions
-    PYEXE=${PYPREFIX}/${PYVER2}/bin/python${PYVER2}
+    PYVER2=${PYVER3:0:3}
+    BINDIR=${PYPREFIX}/${PYVER2}/bin
     ENVDIR="test-${PYVER2}"
-    virtualenv -p "$PYEXE" "$ENVDIR"
+    "${BINDIR}/virtualenv" "$ENVDIR"
     source "${ENVDIR}/bin/activate"
 
     # Install and test the built wheel
@@ -148,6 +155,11 @@ test_wheels () {
     # Reset python to whatever
     deactivate
 }
+
+# Install the python package if required
+for i in $PYVERSIONS; do
+    setup_python $i
+done
 
 # Build wheels for the supported python versions
 for i in $PYVERSIONS; do
