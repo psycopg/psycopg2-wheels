@@ -10,10 +10,17 @@ set -x
 
 PYVERSIONS="2.7.15 3.5.4 3.6.6 3.7.0 3.8.0"
 
-brew update > /dev/null
-brew install gnu-sed
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Install gnu sed
+# Don't use brew as it takes forever
+wget --quiet -O - https://ftp.gnu.org/gnu/sed/sed-4.8.tar.xz | tar xf -
+cd sed-4.8/
+./configure --prefix=/usr/local/Cellar/gnu-sed/4.8 --program-prefix=g gl_cv_func_ftello_works=yes > /dev/null
+make > /dev/null
+make install
+export PATH="/usr/local/Cellar/gnu-sed/4.8/bin:$PATH"
+cd ..
 
 # Create prerequisite libraries
 libdir="$DIR/../libs/"

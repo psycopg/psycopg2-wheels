@@ -1,13 +1,17 @@
+#!/bin/bash
+
+set -euo pipefail
+# set -x
+
 # Build libpq on macOS
 # If you change this, fix WANT_LIBPQ too in .travis.yml
 POSTGRES_VERSION="11.5"
 
 POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
 
-brew install openssl@1.1
 # Force link to OpenSSL 1.1
-export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib $LDFLAGS"
-export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include $CPPFLAGS"
+export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib ${LDFLAGS:-}"
+export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include ${CPPFLAGS:-}"
 
 # Build libpq if needed
 # This recipe is very similar to that in build_libpq.sh, for
@@ -19,7 +23,7 @@ if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
 
     cd "postgres-${POSTGRES_TAG}/"
 
-    brew rm --force postgresql || echo "postgresql not installed"
+    brew rm --force postgresql postgis
 
     ./configure --prefix=/usr/local --without-readline \
         --with-gssapi --with-openssl --with-ldap \
