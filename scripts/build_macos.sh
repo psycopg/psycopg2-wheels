@@ -22,8 +22,14 @@ mkdir -p "$libdir"
 
 # Update pip without needing pip or you will hit problems
 # because pip 9.0.1 is ancient and TLSV1_ALERT_PROTOCOL_VERSION.
-wget -O - https://bootstrap.pypa.io/get-pip.py | sudo python
+which pip
+pip --version
+virtualenv --version || true
+wget --quiet -O - https://bootstrap.pypa.io/get-pip.py | sudo python3
 pip install virtualenv
+which pip
+pip --version
+virtualenv --version
 
 # Find psycopg version
 VERSION=$(grep -e ^PSYCOPG_VERSION psycopg2/setup.py | gsed "s/.*'\(.*\)'/\1/")
