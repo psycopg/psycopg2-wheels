@@ -94,19 +94,19 @@ if [ ! -d "${LDAP_DIR}" ]; then
 
     ./configure --enable-backends=no --enable-null
     make depend
-    (cd libraries/liblutil/ && make)
-    (cd libraries/liblber/ && make)
-    (cd libraries/libldap/ && make)
-    (cd libraries/libldap_r/ && make)
+    make -C libraries/liblutil/
+    make -C libraries/liblber/
+    make -C libraries/libldap/
+    make -C libraries/libldap_r/
 else
     cd "${LDAP_DIR}"
 fi
 
 # Install openldap
-(cd libraries/liblber/ && make install)
-(cd libraries/libldap/ && make install)
-(cd libraries/libldap_r/ && make install)
-(cd include/ && make install)
+make -C libraries/liblber/ install
+make -C libraries/libldap/ install
+make -C libraries/libldap_r/ install
+make -C include/ install
 chmod +x /usr/local/lib/{libldap,liblber}*.so*
 cd ..
 
@@ -131,19 +131,18 @@ if [ ! -d "${POSTGRES_DIR}" ]; then
 
     ./configure --prefix=/usr/local --without-readline \
         --with-gssapi --with-openssl --with-pam --with-ldap
-    (cd src/interfaces/libpq && make)
-    (cd src/bin/pg_config && make)
-    # This will fail after installing postgres_fe.h, which is what we need
-    (cd src/include && make)
+    make -C src/interfaces/libpq
+    make -C src/bin/pg_config
+    make -C src/include
 else
     cd "${POSTGRES_DIR}"
 fi
 
 # Install libpq
-(cd src/interfaces/libpq && make install)
-(cd src/bin/pg_config && make install)
+make -C src/interfaces/libpq install
+make -C src/bin/pg_config install
 # This will fail after installing postgres_fe.h, which is the bit we need
-(cd src/include && make install || true)
+make -C src/include install || true
 cd ..
 
 find /usr/local/ -name \*.so.\* -type f -exec strip --strip-unneeded {} \;

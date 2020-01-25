@@ -28,17 +28,15 @@ if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
     ./configure --prefix=/usr/local --without-readline \
         --with-gssapi --with-openssl --with-ldap \
         --disable-debug
-    (cd src/interfaces/libpq && make)
-    (cd src/bin/pg_config && make)
-    # This will fail after installing postgres_fe.h, which is what we need
-    (cd src/include && make)
+    make -C src/interfaces/libpq
+    make -C src/bin/pg_config
+    make -C src/include
 else
     cd "postgres-${POSTGRES_TAG}/"
 fi
 
 # Install libpq
-(cd src/interfaces/libpq && make install)
-(cd src/bin/pg_config && make install)
-# This will fail after installing postgres_fe.h, which is what we need
-(cd src/include && make install || true)
+make -C src/interfaces/libpq install
+make -C src/bin/pg_config install
+make -C src/include install
 cd ..
