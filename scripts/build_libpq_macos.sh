@@ -13,6 +13,12 @@ POSTGRES_TAG="REL_${POSTGRES_VERSION//./_}"
 export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib ${LDFLAGS:-}"
 export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include ${CPPFLAGS:-}"
 
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+libdir="$dir/../libs/"
+mkdir -p "$libdir"
+cd "$libdir"
+
 # Build libpq if needed
 # This recipe is very similar to that in build_libpq.sh, for
 # Linux. Consider keeping them in sync.
@@ -27,16 +33,16 @@ if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
 
     ./configure --prefix=/usr/local --without-readline \
         --with-gssapi --with-openssl --with-ldap \
-        --disable-debug
-    make -C src/interfaces/libpq
-    make -C src/bin/pg_config
-    make -C src/include
+        --disable-debug > /dev/null
+    make -C src/interfaces/libpq > /dev/null
+    make -C src/bin/pg_config > /dev/null
+    make -C src/include > /dev/null
 else
     cd "postgres-${POSTGRES_TAG}/"
 fi
 
 # Install libpq
-make -C src/interfaces/libpq install
-make -C src/bin/pg_config install
-make -C src/include install
+make -C src/interfaces/libpq install > /dev/null
+make -C src/bin/pg_config install > /dev/null
+make -C src/include install > /dev/null
 cd ..

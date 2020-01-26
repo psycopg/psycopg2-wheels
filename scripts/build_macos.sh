@@ -10,7 +10,7 @@ set -x
 
 PYVERSIONS="2.7.15 3.5.4 3.6.6 3.7.0 3.8.0"
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Install gnu sed
 # Don't use brew as it takes forever
@@ -23,9 +23,7 @@ export PATH="/usr/local/Cellar/gnu-sed/4.8/bin:$PATH"
 cd ..
 
 # Create prerequisite libraries
-libdir="$DIR/../libs/"
-mkdir -p "$libdir"
-(cd "$libdir" && bash ${DIR}/build_libpq_macos.sh > /dev/null)
+${dir}/build_libpq_macos.sh
 
 # Find psycopg version
 VERSION=$(grep -e ^PSYCOPG_VERSION psycopg2/setup.py | gsed "s/.*'\(.*\)'/\1/")
