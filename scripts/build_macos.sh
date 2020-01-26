@@ -14,7 +14,7 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Install gnu sed
 # Don't use brew as it takes forever
-wget --quiet -O - https://ftp.gnu.org/gnu/sed/sed-4.8.tar.xz | tar xf -
+curl -sL https://ftp.gnu.org/gnu/sed/sed-4.8.tar.xz | tar xf -
 cd sed-4.8/
 ./configure --prefix=/usr/local/Cellar/gnu-sed/4.8 --program-prefix=g gl_cv_func_ftello_works=yes > /dev/null
 make > /dev/null
@@ -54,7 +54,7 @@ setup_python () {
     fi
 
     PYINST="python-${PYVER3}-macosx${OSXVER}.${PKGEXT}"
-    wget --quiet "https://www.python.org/ftp/python/${PYVER3}/$PYINST"
+    curl -sOL "https://www.python.org/ftp/python/${PYVER3}/$PYINST"
 
     if [ "$PKGEXT" == "dmg" ]; then
         hdiutil attach $PYINST -mountpoint /Volumes/Python
@@ -77,7 +77,7 @@ setup_python () {
     # Install pip without pip because now pip has a problem pipping pip
     # https://github.com/geerlingguy/mac-dev-playbook/issues/61
     if [ ! -f get-pip.py ]; then
-        wget --quiet https://bootstrap.pypa.io/get-pip.py
+        curl -sOL https://bootstrap.pypa.io/get-pip.py
     fi
     "${PYEXE}" get-pip.py
     "${BINDIR}/pip" install -U virtualenv

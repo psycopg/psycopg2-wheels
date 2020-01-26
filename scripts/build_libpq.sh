@@ -2,8 +2,8 @@
 
 # Build a modern version of libpq and depending libs from source on Centos 5
 
-set -e -x
-set -o pipefail
+set -euo pipefail
+set -x
 
 OPENSSL_VERSION="1.1.1d"
 LDAP_VERSION="2.4.48"
@@ -14,8 +14,10 @@ POSTGRES_VERSION="11.5"
 yum install -y zlib-devel krb5-devel pam-devel
 
 # Need perl 5.10.0 to build/install openssl
-curl -L https://install.perlbrew.pl | bash
+curl -sL https://install.perlbrew.pl | bash
+set +eu
 source ~/perl5/perlbrew/etc/bashrc
+set -eu
 perlbrew install --notest perl-5.16.0
 perlbrew switch perl-5.16.0
 
