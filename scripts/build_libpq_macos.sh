@@ -29,8 +29,6 @@ if [ ! -d "postgres-${POSTGRES_TAG}/" ]; then
 
     cd "postgres-${POSTGRES_TAG}/"
 
-    brew rm --force postgresql postgis
-
     ./configure --prefix=/usr/local --without-readline \
         --with-gssapi --with-openssl --with-ldap \
         --disable-debug > /dev/null
