@@ -43,7 +43,8 @@ matrix:
 before_script:
     - sudo ./scripts/configure_postgres.sh
 
-script: $SCRIPT
+script:
+  - travis_wait 30 $SCRIPT
 
 deploy:
   - provider: script
