@@ -18,6 +18,8 @@ environment:
         # https://www.appveyor.com/docs/build-environment/
       - {PY_VER: "27", PY_ARCH: "32"}
       - {PY_VER: "27", PY_ARCH: "64"}
+      - {PY_VER: "39", PY_ARCH: "32"}
+      - {PY_VER: "39", PY_ARCH: "64"}
       - {PY_VER: "38", PY_ARCH: "32"}
       - {PY_VER: "38", PY_ARCH: "64"}
       - {PY_VER: "37", PY_ARCH: "32"}
