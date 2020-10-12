@@ -43,10 +43,6 @@ for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" wheel /build/psycopg2/ -w /build/psycopg2/wheels/
 done
 
-# Make sure auditwheel will not include libresolv
-POLICY=/opt/_internal/cpython-3.*/lib/python3.*/site-packages/auditwheel/policy/policy.json
-grep -q libresolv $POLICY
-
 # Bundle external shared libraries into the wheels
 for WHL in /build/psycopg2/wheels/*.whl; do
     auditwheel repair "$WHL" -w "$DISTDIR"
