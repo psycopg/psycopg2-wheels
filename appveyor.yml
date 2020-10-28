@@ -29,7 +29,7 @@ environment:
         - {APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015, PY_VER: "34", PY_ARCH: "32"}
         - {APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015, PY_VER: "34", PY_ARCH: "64"}
 
-    OPENSSL_VERSION: "1_1_1g"
+    OPENSSL_VERSION: "1_1_1h"
     POSTGRES_VERSION: "11_4"
 
     PSYCOPG2_TESTDB: psycopg2_test
