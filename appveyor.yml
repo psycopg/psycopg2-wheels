@@ -40,6 +40,9 @@ environment:
     PGPASSWORD: Password12!
     PGSSLMODE: require
 
+    # Add CWD to perl library path for PostgreSQL build on VS2019
+    PERL5LIB: .
+
     # Select according to the service enabled
     POSTGRES_DIR: C:\Program Files\PostgreSQL\9.6\
 
