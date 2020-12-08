@@ -28,12 +28,10 @@ matrix:
         - env:
             SCRIPT=./scripts/build_manylinux1_x86_64.sh
             PACKAGE_NAME="psycopg2-binary"
-        # Disabled as currently unable to build on Travis
-        # https://github.com/psycopg/psycopg2-wheels/issues/16
-        # - arch: arm64
-        #   env:
-        #     SCRIPT=./scripts/build_manylinux2014_aarch64.sh
-        #     PACKAGE_NAME="psycopg2-binary"
+        - arch: arm64
+          env:
+            SCRIPT=./scripts/build_manylinux2014_aarch64.sh
+            PACKAGE_NAME="psycopg2-binary"
         - os:
             osx
           osx_image:
