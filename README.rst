@@ -1,6 +1,13 @@
 Building and uploading psycopg2 packages
 ========================================
 
+Note: this repository is no more in use. Starting from 2.9, the procedures to
+build psycopg2 packages are part of the `psycopg2 repository`__ itself.
+
+So Long, and Thanks for All the Fish. 🐬🐬🐬
+
+.. __: https://github.com/psycopg/psycopg2
+
 :Linux/OSX: |travis|
 :Windows: |appveyor|
 
@@ -11,6 +18,8 @@ Building and uploading psycopg2 packages
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/psycopg/psycopg2-wheels?branch=master&svg=true
     :target: https://ci.appveyor.com/project/psycopg/psycopg2-wheels/branch/master
     :alt: Windows packages build status
+
+----
 
 This project is used to create binary packages of psycopg2_. It creates:
 
